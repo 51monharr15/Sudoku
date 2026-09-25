@@ -85,12 +85,24 @@ If you **only** have FTP and **no** computer to run npm, you need someone (or a 
 
 Your setup: **Apache**, **HTTPS**, upload by **FTP**, no shell. That works.
 
+### Ready-made files (no npm on your phone)
+
+In this project, open the **`deploy`** folder. You will find:
+
+| File | Purpose |
+|------|---------|
+| **`sudoku-studio-upload.zip`** | The whole website — download this to your phone |
+| **`UPLOAD-FROM-PHONE.txt`** | Short numbered steps: unzip → FTP → open https |
+
+You do **not** need to run npm yourself if you use that zip.
+
 ### What you upload
 
-1. Get a zip or folder of the **built** site (`dist` contents).
-2. Log in with **FTP** (FileZilla, host app, etc.).
-3. Open your site folder (often `public_html`, `www`, or `htdocs`).
-4. Upload **all** files and folders from `dist` so that `index.html` sits in that site folder (or in a subfolder if you use e.g. `https://yoursite.com/sudoku/` — ask whoever built it to set that path).
+1. Download **`deploy/sudoku-studio-upload.zip`** to your phone.
+2. Unzip it (Files / Downloads app).
+3. Log in with **FTP** and open your web folder (`public_html`, `www`, or `htdocs`).
+4. Upload **everything** from the unzipped folder, including the **`assets`** folder.
+5. Open **`https://your-domain/`** in Chrome.
 
 ### What you do **not** need
 

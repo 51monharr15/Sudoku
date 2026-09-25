@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "deploy:zip": "npm run build && cd dist && zip -r ../deploy/sudoku-studio-upload.zip ."
   },
   "dependencies": {
     "react": "^19.2.8",
