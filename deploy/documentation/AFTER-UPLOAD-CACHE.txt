@@ -1,0 +1,30 @@
+AFTER UPLOAD — FIX OLD OR BROKEN UI
+===================================
+
+SYMPTOM
+  Propose works but no Strong button, no colours, blank page, or old look.
+
+
+FIX 1 — SERVER
+  FTP: delete ALL files in the web folder, re-upload  deploy/website  only.
+
+
+FIX 2 — PHONE CACHE (important for home-screen app)
+  1. Chrome → open https://YOUR-DOMAIN/
+  2. Tap lock icon or site info → Site settings
+  3. Clear storage / Delete all data for this site
+  4. Reload the page
+
+  Or: remove Home screen shortcut → open in Chrome again → re-add shortcut.
+
+
+CHECK
+  In Chrome address bar open:
+    https://YOUR-DOMAIN/assets/index-D6ePt1ei.js
+
+  If 404,  assets  folder did not upload correctly.
+
+
+YOU SHOULD SEE
+  Fill | Propose | Candidates | Strong
+  Row: n=2  n=3  n=4

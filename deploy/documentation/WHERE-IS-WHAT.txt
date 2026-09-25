@@ -1,0 +1,11 @@
+FILES IN deploy/documentation/
+================================
+
+HOW-TO-USE-APP.txt       — revised UI (Strong, colours, Propose)
+UPLOAD-FTP.txt             — what to FTP (website folder only)
+AFTER-UPLOAD-CACHE.txt     — fix old UI / missing Strong button
+USER_GUIDE.md              — full guide
+START_HERE.md              — plain-language intro
+DEPLOYMENT.md              — Apache / hosting notes
+
+Parent folder deploy/READ-ME-FIRST.txt — start there.

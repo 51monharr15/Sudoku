@@ -1,15 +1,5 @@
-FIXED ZIP (relative paths — blank page fix)
+See READ-ME-FIRST.txt in this folder.
 
-Download:
-https://angry-banks-accept.loca.lt/sudoku-studio-upload.zip
+Download repo: Codebase → Sudoku → Settings → Advanced → Download.
 
-Unzip.
-Delete OLD files on server first.
-FTP everything including assets folder.
-index.html and assets must be together.
-
-Test JS loads:
-https://YOUR-DOMAIN/assets/index-D0I1LU0p.js
-
-GitHub import login:
-docs/CURSOR-IMPORT-LOGIN.md
+Upload only: deploy/website/

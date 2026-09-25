@@ -1,13 +1,12 @@
-# Deploy package (for FTP from phone or PC)
+# Deploy package
 
-Download **`sudoku-studio-upload.zip`** — it is the complete Sudoku Studio website.
+**Start here:** [READ-ME-FIRST.txt](./READ-ME-FIRST.txt)
 
-Follow **`UPLOAD-FROM-PHONE.txt`** step by step.
+| Item | Purpose |
+|------|---------|
+| **`website/`** | **Upload this folder to FTP** (live site) |
+| **`sudoku-studio-upload.zip`** | Same as `website/`, for unzip + upload |
+| **`documentation/`** | How to use the app and how to upload |
+| **`UPLOAD-FROM-PHONE.txt`** | FTP steps (legacy name; see also documentation/) |
 
-To rebuild this zip after code changes (on a computer with Node):
-
-```bash
-npm run deploy:zip
-```
-
-Then commit the new zip or upload it directly via FTP.
+Rebuild zip after code changes: `npm run deploy:zip` (from repo root on a computer).

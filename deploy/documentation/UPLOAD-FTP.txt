@@ -1,0 +1,22 @@
+UPLOAD TO YOUR WEBSITE (FTP FROM PHONE)
+=======================================
+
+YOU NEED
+  Folder:  deploy/website/   (from repo download or unzipped sudoku-studio-upload.zip)
+
+STEPS
+  1. FTP app → connect to your host.
+  2. Open your web folder (public_html / www / htdocs).
+  3. Delete OLD site files first if updating (especially old assets/*.js).
+  4. Upload EVERYTHING inside  website :
+       index.html
+       assets/   (both files inside — required)
+       favicon.svg, icons.svg, pwa-192.png, pwa-512.png
+       manifest.webmanifest, registerSW.js, sw.js, workbox-*.js
+       .htaccess
+  5. index.html must sit directly in the web folder, next to  assets .
+
+WRONG (do not upload)
+  deploy/documentation/
+  deploy/*.txt
+  src/  docs/  from repo root

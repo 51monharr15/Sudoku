@@ -9,12 +9,17 @@ WHAT IS INSIDE THE ZIP:
   The complete website. After upload, your browser opens index.html.
 
 
-STEP 1 — GET THE ZIP ON YOUR PHONE
-----------------------------------
-  • Open your Sudoku project on the web (GitHub / Cursor / Origin).
-  • Go to folder:  deploy
-  • Download:  sudoku-studio-upload.zip
-  • Save it (Downloads).
+STEP 1 — GET FILES ON YOUR PHONE
+--------------------------------
+  Cursor (recommended):
+
+  • cursor.com → Codebase → Sudoku
+  • Settings → Advanced → Download  (whole repo)
+  • Unzip → open  deploy/website  for upload
+
+  Or from folder  deploy  only:
+  • Download / unzip  sudoku-studio-upload.zip
+  (Same files as  deploy/website/ )
 
 
 STEP 2 — UNZIP ON YOUR PHONE

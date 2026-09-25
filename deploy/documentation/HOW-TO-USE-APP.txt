@@ -1,0 +1,42 @@
+HOW TO USE SUDOKU STUDIO (revised UI)
+=====================================
+
+OPEN THE APP
+  Chrome → https://YOUR-DOMAIN/
+  Optional: Add to Home screen (Chrome menu).
+
+
+BUTTONS (below the grid)
+  Fill        — enter your answers in empty cells
+  Propose     — preview a move without saving until Apply chain
+  Candidates  — small pencil marks in empty cells
+  Strong      — highlight strong-link cells (toggle on/off)
+
+  n=2  n=3  n=4  — strong link size (when Strong is on)
+
+
+DIGIT COLOURS AND HIGHLIGHTS
+  1. Tap one or more numbers on the numpad (1–9). They stay “picked”.
+  2. Matching cells light up in different colours per digit.
+  3. Tap  Clear #  to clear picked digits.
+
+
+FILL MODE
+  Tap an empty cell → tap a digit.
+  Use Import for a new puzzle (81-character string or 9 lines).
+  White = given clue. Blue = your entry.
+
+
+PROPOSE MODE
+  Tap empty cell → tap digit → preview shows on the board.
+  Scroll to  Consequence chain  → use step prev/next.
+  Apply chain — save the move. Dismiss preview — cancel.
+
+
+CONFLICTS
+  You can place an illegal digit; conflicting cells highlight.
+  Clear clash — remove conflicting entries you added.
+
+
+IMPORT
+  Header → Import → paste puzzle → Import puzzle.
