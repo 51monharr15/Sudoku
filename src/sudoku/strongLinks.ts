@@ -118,38 +118,14 @@ export function findNakedStrongLinks(
   return out
 }
 
-export function strongLinksForSelection(
-  candidates: CandidateMask[],
-  n: 2 | 3 | 4,
-  selectedDigits: Digit[],
-): StrongLinkGroup[] {
+export function strongLinksForN(candidates: CandidateMask[], n: 2 | 3 | 4): StrongLinkGroup[] {
   const groups: StrongLinkGroup[] = []
   const seen = new Set<string>()
   const key = (g: StrongLinkGroup) =>
     `${g.kind}-${g.unit}-${g.unitIndex}-${g.cells.join(',')}-${g.digits.join(',')}`
 
-  if (selectedDigits.length === 0) {
-    for (let d = 1; d <= 9; d++) {
-      for (const g of findHiddenStrongLinksForDigit(candidates, d as Digit, n)) {
-        const k = key(g)
-        if (!seen.has(k)) {
-          seen.add(k)
-          groups.push(g)
-        }
-      }
-    }
-    for (const g of findNakedStrongLinks(candidates, n)) {
-      const k = key(g)
-      if (!seen.has(k)) {
-        seen.add(k)
-        groups.push(g)
-      }
-    }
-    return groups
-  }
-
-  for (const d of selectedDigits) {
-    for (const g of findHiddenStrongLinksForDigit(candidates, d, n)) {
+  for (let d = 1; d <= 9; d++) {
+    for (const g of findHiddenStrongLinksForDigit(candidates, d as Digit, n)) {
       const k = key(g)
       if (!seen.has(k)) {
         seen.add(k)
@@ -157,7 +133,7 @@ export function strongLinksForSelection(
       }
     }
   }
-  for (const g of findNakedStrongLinks(candidates, n, selectedDigits)) {
+  for (const g of findNakedStrongLinks(candidates, n)) {
     const k = key(g)
     if (!seen.has(k)) {
       seen.add(k)

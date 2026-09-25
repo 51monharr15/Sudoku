@@ -4,10 +4,10 @@ import { ChainPanel } from './components/ChainPanel'
 import { ImportModal } from './components/ImportModal'
 import { SudokuGrid, type CellHighlight } from './components/SudokuGrid'
 import { computeCandidates } from './sudoku/candidates'
-import { cloneGrid, maskHas } from './sudoku/grid'
+import { cloneGrid, conflictingCells, maskHas } from './sudoku/grid'
 import { importPuzzle, SAMPLE_PUZZLE } from './sudoku/import'
 import { analyzeProposedMove } from './sudoku/implications'
-import { strongLinksForSelection } from './sudoku/strongLinks'
+import { strongLinksForN } from './sudoku/strongLinks'
 import type { Digit, Grid, ProposedMoveAnalysis } from './sudoku/types'
 
 type InputMode = 'value' | 'propose'
@@ -29,8 +29,9 @@ export default function App() {
   const [analysis, setAnalysis] = useState<ProposedMoveAnalysis | null>(null)
   const [activeStepId, setActiveStepId] = useState<number | null>(null)
   const [previewOn, setPreviewOn] = useState(false)
+  const [conflictAt, setConflictAt] = useState<number | null>(null)
+  const [conflictPeers, setConflictPeers] = useState<number[]>([])
 
-  /** Order preserved; last entry = last selected digit */
   const [selectedDigits, setSelectedDigits] = useState<Digit[]>([])
   const [strongN, setStrongN] = useState<2 | 3 | 4>(2)
   const [showStrongLinks, setShowStrongLinks] = useState(true)
@@ -41,24 +42,31 @@ export default function App() {
 
   const strongLinkCells = useMemo(() => {
     if (!showStrongLinks) return new Set<number>()
-    const groups = strongLinksForSelection(candidates, strongN, selectedDigits)
+    const groups = strongLinksForN(candidates, strongN)
     const cells = new Set<number>()
     for (const g of groups) for (const c of g.cells) cells.add(c)
     return cells
-  }, [candidates, strongN, selectedDigits, showStrongLinks])
+  }, [candidates, strongN, showStrongLinks])
+
+  const digitColor = useMemo(() => {
+    const map = new Map<number, Digit>()
+    for (const d of selectedDigits) {
+      for (let cell = 0; cell < 81; cell++) {
+        const v = values[cell]
+        if (v === d || (v === 0 && maskHas(candidates[cell], d))) {
+          map.set(cell, d)
+        }
+      }
+    }
+    return map
+  }, [selectedDigits, values, candidates])
 
   const highlights = useMemo(() => {
     const map = new Map<number, CellHighlight>()
 
-    if (!previewOn && selectedDigits.length > 0) {
+    if (selectedDigits.length > 0) {
       for (let cell = 0; cell < 81; cell++) {
-        const v = values[cell]
-        let match = false
-        for (const d of selectedDigits) {
-          if (v === d) match = true
-          else if (v === 0 && maskHas(candidates[cell], d)) match = true
-        }
-        if (match) map.set(cell, 'digit-match')
+        if (digitColor.has(cell)) map.set(cell, 'digit-match')
       }
     }
 
@@ -68,6 +76,11 @@ export default function App() {
       }
     }
 
+    if (conflictAt !== null) {
+      map.set(conflictAt, 'conflict')
+      for (const p of conflictPeers) map.set(p, 'conflict-peer')
+    }
+
     if (analysis && previewOn) {
       for (const [cell, role] of analysis.highlights) {
         map.set(cell, role as CellHighlight)
@@ -75,7 +88,8 @@ export default function App() {
     }
 
     if (selectedCell !== null) {
-      map.set(selectedCell, previewOn ? (map.get(selectedCell) ?? 'selected') : 'selected')
+      const existing = map.get(selectedCell)
+      if (!existing || existing === 'digit-match') map.set(selectedCell, 'selected')
     }
 
     if (activeStepId !== null && analysis) {
@@ -94,10 +108,11 @@ export default function App() {
     selectedCell,
     activeStepId,
     selectedDigits,
-    values,
-    candidates,
+    digitColor,
     strongLinkCells,
     showStrongLinks,
+    conflictAt,
+    conflictPeers,
   ])
 
   const activeChainCell = useMemo(() => {
@@ -113,6 +128,8 @@ export default function App() {
       setAnalysis(result)
       setPreviewOn(true)
       setActiveStepId(result.steps[0]?.id ?? null)
+      setConflictAt(null)
+      setConflictPeers([])
     },
     [values],
   )
@@ -120,13 +137,30 @@ export default function App() {
   const toggleDigit = useCallback((digit: Digit) => {
     setSelectedDigits((prev) => {
       const i = prev.indexOf(digit)
-      if (i >= 0) {
-        const next = [...prev.slice(0, i), ...prev.slice(i + 1)]
-        return next
-      }
+      if (i >= 0) return [...prev.slice(0, i), ...prev.slice(i + 1)]
       return [...prev, digit]
     })
   }, [])
+
+  const applyFill = useCallback(
+    (cell: number, digit: Digit) => {
+      const next = cloneGrid(values)
+      next[cell] = digit
+      setValues(next)
+      setAnalysis(null)
+      setPreviewOn(false)
+      setActiveStepId(null)
+      const peers = conflictingCells(next, cell)
+      if (peers.length > 0) {
+        setConflictAt(cell)
+        setConflictPeers(peers)
+      } else {
+        setConflictAt(null)
+        setConflictPeers([])
+      }
+    },
+    [values],
+  )
 
   const handleCell = useCallback(
     (cell: number) => {
@@ -139,18 +173,10 @@ export default function App() {
         return
       }
 
-      if (values[cell] === 0 || !givens[cell]) {
-        setValues((prev) => {
-          const next = cloneGrid(prev)
-          next[cell] = digit
-          return next
-        })
-        setAnalysis(null)
-        setPreviewOn(false)
-        setActiveStepId(null)
-      }
+      if (values[cell] !== 0 && givens[cell]) return
+      applyFill(cell, digit)
     },
-    [lastSelectedDigit, givens, inputMode, runPreview, values],
+    [lastSelectedDigit, givens, inputMode, runPreview, values, applyFill],
   )
 
   const clearCell = useCallback(() => {
@@ -160,9 +186,24 @@ export default function App() {
       next[selectedCell] = 0
       return next
     })
+    setConflictAt(null)
+    setConflictPeers([])
     setAnalysis(null)
     setPreviewOn(false)
   }, [selectedCell, givens])
+
+  const clearClash = useCallback(() => {
+    if (conflictAt === null) return
+    setValues((prev) => {
+      const next = cloneGrid(prev)
+      for (const p of conflictPeers) {
+        if (!givens[p]) next[p] = 0
+      }
+      return next
+    })
+    setConflictAt(null)
+    setConflictPeers([])
+  }, [conflictAt, conflictPeers, givens])
 
   const commitPreview = useCallback(() => {
     if (!analysis?.valid) return
@@ -170,6 +211,8 @@ export default function App() {
     setPreviewOn(false)
     setAnalysis(null)
     setActiveStepId(null)
+    setConflictAt(null)
+    setConflictPeers([])
   }, [analysis])
 
   const handleStepOffset = useCallback(
@@ -194,10 +237,17 @@ export default function App() {
       setPreviewOn(false)
       setSelectedCell(null)
       setSelectedDigits([])
+      setConflictAt(null)
+      setConflictPeers([])
     } catch (e) {
       setImportError(e instanceof Error ? e.message : 'Import failed')
     }
   }
+
+  const conflictMsg =
+    conflictAt !== null
+      ? `Rule clash: same digit in row/column/box. Clear clash removes the other cell(s), keeps your last entry.`
+      : null
 
   return (
     <div className="app">
@@ -216,6 +266,15 @@ export default function App() {
         </p>
       )}
 
+      {conflictMsg && (
+        <div className="banner conflict" role="alert">
+          <p>{conflictMsg}</p>
+          <button type="button" className="btn ghost small" onClick={clearClash}>
+            Clear clash
+          </button>
+        </div>
+      )}
+
       <SudokuGrid
         values={values}
         givens={givens}
@@ -223,7 +282,9 @@ export default function App() {
         showCandidates={showCandidates}
         selectedCell={selectedCell}
         highlights={highlights}
-        filterDigits={previewOn ? [] : selectedDigits}
+        digitColor={digitColor}
+        filterDigits={selectedDigits}
+        previewDim={previewOn}
         previewValues={previewValues}
         activeChainCell={activeChainCell}
         onSelectCell={handleCell}
@@ -279,7 +340,7 @@ export default function App() {
       </div>
 
       <p className="hint-bar">
-        Tap digits to highlight (tap again to off). Last # + cell → {inputMode === 'propose' ? 'propose' : 'fill'}.
+        Fill = solve empty cells (Import for new puzzles). # then cell. Import for givens.
       </p>
 
       <div className="numpad" role="group" aria-label="Digits">

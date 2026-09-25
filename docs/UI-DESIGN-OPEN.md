@@ -1,60 +1,30 @@
-# UI requirements — confirmed & pending
+# UI requirements
 
-**Process:** Do not treat UI as final until user signs off here.
-
----
-
-## Confirmed (user 2026-09-25)
-
-1. **Digit highlight colours:** different colour **per digit** (1–9).
-2. **Strong links:** show when **Strong** toggle is on (not gated on selected digits).
-3. **Pointing / locked in chains:** **yes** — box↔line reductions (pointing pair/triple, claiming).
-4. **Multi-digit logic:** **yes** — e.g. skyscraper-style, not single-digit only.
+**Process:** Spec first; implement after user says **go ahead**.
 
 ---
 
-## Pending — need user answer
+## Confirmed
 
-### Q5 — Digit highlights during Propose preview
-
-When you **Propose** (temporary “what if” grid + chain):
-
-- **A)** Keep digit highlights (tap 5, green cells stay) **on top of** preview colours.
-- **B)** Hide digit highlights until you tap **Dismiss preview**.
-- **C)** Dim digit highlights but keep them visible.
-
-*Reply A, B, or C.*
-
-### Q6 — What “Fill” is for + rule errors
-
-Two different jobs:
-
-| Mode | Purpose |
-|------|---------|
-| **Enter puzzle** | Building/importing **givens** (clues), or fixing setup |
-| **Solve** | Playing: placing **your** answers in empty cells |
-
-*Which should **Fill** mean by default?* Enter / Solve / both with a separate toggle?
-
-**Rule break (your example):** placing a 2nd same digit in a row/col/box.
-
-*Desired behaviour (pick or describe):*
-
-- Block the digit (not placed)?
-- Place but show error (banner + highlight conflicting cells)?
-- Allow but mark cell red until fixed?
+1. **Digit colours:** different per digit (1–9).
+2. **Strong links:** when **Strong** toggle is on.
+3. **Pointing / locked** in chains — yes (box↔line).
+4. **Multi-digit** chains — yes (e.g. skyscraper).
+5. **Propose preview:** **C** — dim digit highlights, still visible.
+6. **Illegal placement:** **allow + show** conflict cells; clearing may remove **clash** cells, not necessarily the last entry.
+7. **Fill:** user unsure Enter vs Solve. **(default for now)** **Solve** — use **Import** for new givens; Fill only empty/non-given cells.
 
 ---
 
-## Not yet implemented (waiting sign-off)
+## Still to build (after go ahead)
 
-- Per-digit highlight colours (current build uses one green style).
-- Strong links only when Strong on (partially there; refine per spec).
-- Pointing / locked / skyscraper in solver + chain steps.
-- Fill vs Enter + conflict UX.
+- Per-digit highlight colours in UI.
+- Q5 C dim during preview.
+- Conflict banner + highlights + “Clear clash”.
+- Pointing / locked / skyscraper in engine + chain.
 
 ---
 
-## Current branch note
+## Branch
 
-`cursor/ui-highlight-propose-a929` has exploratory UI. Treat as **draft** until this doc is approved and work is explicitly requested.
+`cursor/ui-highlight-propose-a929` = draft until signed off.
