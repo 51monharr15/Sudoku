@@ -1,0 +1,28 @@
+# Sudoku Studio
+
+Mobile-first **Progressive Web App** for Sudoku with automatic pencil marks, standard puzzle import, and **proposed-move implication chains**.
+
+## Features
+
+- **9×9 touch-friendly grid** with given vs. user digits
+- **Auto candidates** (pencil marks) from current placements
+- **Import** 81-character Sudoku Exchange / `.sdk` strings, or 9-line grids (`0`, `.`, `-`, `_` for empty)
+- **Propose mode**: pick a cell and digit to preview eliminations and cascades of naked/hidden singles
+- **Consequence chain** panel with step-by-step highlights on the board
+
+## Develop
+
+```bash
+npm install
+npm run dev
+```
+
+## Test & build
+
+```bash
+npm test
+npm run build
+npm run preview
+```
+
+Install to home screen from the browser for standalone mobile use (service worker enabled via `vite-plugin-pwa`).

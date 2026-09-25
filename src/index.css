@@ -1,0 +1,12 @@
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent, #e94560);
+  outline-offset: 2px;
+}
