@@ -253,12 +253,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="top-bar">
-        <div className="title-block">
-          <h1>Sudoku Studio</h1>
-          <span className="app-version" title="Must match VERSION file on server">
-            {APP_VERSION}
-          </span>
-        </div>
+        <h1>Sudoku Studio</h1>
         <div className="top-actions">
           <button type="button" className="btn ghost small" onClick={() => setImportOpen(true)}>
             Import
@@ -401,6 +396,12 @@ export default function App() {
       />
 
       <ImportModal open={importOpen} onClose={() => setImportOpen(false)} onImport={handleImport} />
+
+      <footer className="app-footer">
+        <span className="app-version" title="Must match VERSION file on server">
+          {APP_VERSION}
+        </span>
+      </footer>
     </div>
   )
 }
