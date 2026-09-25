@@ -3,6 +3,8 @@ import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  // Relative paths so FTP works in any folder (not only domain root).
+  base: './',
   server: {
     host: true,
     // Cursor cloud port-forwarding uses *.cursorvm.com hostnames.
