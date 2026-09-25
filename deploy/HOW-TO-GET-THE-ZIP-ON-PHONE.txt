@@ -1,0 +1,48 @@
+YOUR PHONE WON'T DOWNLOAD .zip FROM THE CODE BROWSER?
+======================================================
+
+The code website often opens zip files instead of downloading them.
+Use ONE of these methods:
+
+
+METHOD A — DOWNLOAD THE TEXT FILE, TURN IT INTO A ZIP (easiest)
+----------------------------------------------------------------
+1. In the repo, open folder:  deploy
+
+2. Download this file (text — browsers usually save it):
+      sudoku-studio-upload.zip.base64.txt
+
+3. On your phone, open a browser and go to:
+      https://base64.guru/converter/decode/file
+
+4. Upload or paste the contents of that .txt file.
+   Decode → download the resulting .zip
+
+5. Unzip → FTP upload (see UPLOAD-FROM-PHONE.txt)
+
+
+METHOD B — DOWNLOAD FILES ONE BY ONE (no zip)
+---------------------------------------------
+1. Open folder:  deploy/website/
+
+2. FTP upload EVERYTHING inside to your web directory:
+      index.html
+      assets/   (folder with 2 files inside)
+      favicon.svg, icons.svg, pwa-192.png, pwa-512.png
+      manifest.webmanifest, registerSW.js, sw.js
+      workbox-9c191d2f.js
+      .htaccess
+
+3. Keep the same folder layout on the server.
+
+
+METHOD C — USE A GIT APP ON YOUR PHONE (if you use one)
+-------------------------------------------------------
+Clone the repo, open the  deploy  folder in the app,
+share/export  sudoku-studio-upload.zip  to Files or FTP.
+
+
+AFTER YOU HAVE THE SITE ON THE SERVER
+-------------------------------------
+Open:  https://YOUR-DOMAIN/
+Chrome → menu → Add to Home screen
