@@ -1,5 +1,7 @@
 # Get a new version on your phone / server
 
+**Start here for full setup:** **[GET-EVERYTHING.md](./GET-EVERYTHING.md)**
+
 Do **not** post FTP passwords in chat.
 
 ---

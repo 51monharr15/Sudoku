@@ -1,0 +1,48 @@
+# Build deploy zip on every main push. Optional FTP when repo secrets + variable are set.
+name: Build and deliver
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run deploy:zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sudoku-studio-upload
+          path: deploy/sudoku-studio-upload.zip
+          retention-days: 90
+
+  ftp-deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: vars.FTP_DEPLOY == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run deploy:zip
+      - name: Install lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Upload to web host (FTP)
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+          FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+          FTP_PORT: ${{ secrets.FTP_PORT }}
+        run: bash scripts/ftp-deploy.sh

@@ -7,7 +7,7 @@ SRC="${ROOT}/deploy/website"
 
 for v in FTP_HOST FTP_USER FTP_PASS FTP_REMOTE_DIR; do
   if [[ -z "${!v:-}" ]]; then
-    echo "Missing env $v — add it in Cursor Dashboard → Cloud Agents → Secrets, then start a NEW agent."
+    echo "Missing env $v — set in Cursor Cloud Agents → Secrets (new agent), or GitHub Actions repo secrets + FTP_DEPLOY=true. See docs/GET-EVERYTHING.md."
     exit 1
   fi
 done
