@@ -52,11 +52,25 @@ body {
   padding: 8px 0 4px;
 }
 
+.title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 1.1;
+}
+
 .top-bar h1 {
   font-size: 1.15rem;
   font-weight: 700;
   margin: 0;
   letter-spacing: -0.02em;
+}
+
+.app-version {
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.02em;
 }
 
 .btn {

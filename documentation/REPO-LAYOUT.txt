@@ -1,0 +1,10 @@
+REPO LAYOUT (one download = everything)
+=======================================
+
+VERSION                          — version string (see app UI under title)
+
+deploy/website/                  — upload to FTP
+deploy/sudoku-studio-upload.zip
+deploy/VERSION
+
+documentation/                   — all how-to files (this folder)

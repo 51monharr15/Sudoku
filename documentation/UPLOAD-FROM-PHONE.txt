@@ -1,0 +1,72 @@
+SUDOKU STUDIO — UPLOAD FROM YOUR PHONE (HTTPS site)
+==================================================
+
+YOU NEED THIS ZIP FILE:
+  sudoku-studio-upload.zip
+(same folder as this text file)
+
+WHAT IS INSIDE THE ZIP:
+  The complete website. After upload, your browser opens index.html.
+
+
+STEP 1 — GET FILES ON YOUR PHONE
+--------------------------------
+  Cursor (recommended):
+
+  • cursor.com → Codebase → Sudoku
+  • Settings → Advanced → Download  (whole repo)
+  • Unzip → open  deploy/website  for upload
+
+  Or from folder  deploy  only:
+  • Download / unzip  sudoku-studio-upload.zip
+  (Same files as  deploy/website/ )
+
+
+STEP 2 — UNZIP ON YOUR PHONE
+----------------------------
+  • Open your Files app (or “Downloads”).
+  • Tap the zip file → Extract / Unzip.
+  • You should see a folder with:
+      index.html
+      assets   (folder — important!)
+      favicon.svg
+      pwa-192.png
+      pwa-512.png
+      manifest.webmanifest
+      sw.js
+      registerSW.js
+      workbox-....js
+      .htaccess
+
+
+STEP 3 — FTP UPLOAD
+-------------------
+  • Open your FTP app. Connect to your host.
+  • Open your WEB folder (often named):
+      public_html   or   www   or   htdocs
+  • Upload EVERY file and folder from the unzipped folder.
+  • index.html must end up INSIDE that web folder (not only inside a zip on the server).
+
+  IMPORTANT:
+  • Upload the  assets  folder too (contains the app code).
+  • If asked, choose “Overwrite” for old files when you update later.
+
+
+STEP 4 — OPEN IN CHROME
+-----------------------
+  • Visit:  https://YOUR-DOMAIN/
+  • You should see the Sudoku grid.
+
+  Add to home screen: Chrome menu → Add to Home screen / Install app.
+
+
+IF THE PAGE IS BLANK OR WRONG
+------------------------------
+  • Check index.html is in the same folder your domain uses.
+  • Check the  assets  folder uploaded and is next to index.html.
+  • Try a private/incognito tab once (clears a bad cache).
+
+
+UPDATES LATER
+-------------
+  Download a new sudoku-studio-upload.zip, unzip, FTP upload again (overwrite).

@@ -9,7 +9,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "deploy:zip": "npm run build && rm -rf deploy/website && cp -a dist deploy/website && cd deploy/website && zip -r ../sudoku-studio-upload.zip ."
+    "deploy:zip": "npm run build && rm -rf deploy/website && cp -a dist deploy/website && cp VERSION deploy/VERSION && cp VERSION deploy/website/VERSION && cd deploy/website && zip -r ../sudoku-studio-upload.zip ."
   },
   "dependencies": {
     "react": "^19.2.8",

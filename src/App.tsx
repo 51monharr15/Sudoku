@@ -252,7 +252,12 @@ export default function App() {
   return (
     <div className="app">
       <header className="top-bar">
-        <h1>Sudoku Studio</h1>
+        <div className="title-block">
+          <h1>Sudoku Studio</h1>
+          <span className="app-version" title="Build version">
+            {__APP_VERSION__}
+          </span>
+        </div>
         <div className="top-actions">
           <button type="button" className="btn ghost small" onClick={() => setImportOpen(true)}>
             Import

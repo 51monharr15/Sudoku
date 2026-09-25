@@ -1,0 +1,11 @@
+IN THIS REPO (download the whole repository)
+==============================================
+
+VERSION                 — build label (also shown in the app UI)
+
+deploy/website/         — UPLOAD THIS FOLDER TO FTP (live site)
+deploy/sudoku-studio-upload.zip — same files as website/ (zipped)
+
+documentation/          — how to use the app and how to upload (this folder)
+
+src/ docs/ scripts/    — source code (ignore for phone FTP)

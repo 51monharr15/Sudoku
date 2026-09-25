@@ -26,5 +26,6 @@ CHECK
 
 
 YOU SHOULD SEE
+  Under title: version 2026.09.25.1  (or newer)
   Fill | Propose | Candidates | Strong
   Row: n=2  n=3  n=4
