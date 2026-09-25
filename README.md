@@ -26,3 +26,8 @@ npm run preview
 ```
 
 Install to home screen from the browser for standalone mobile use (service worker enabled via `vite-plugin-pwa`).
+
+## Documentation
+
+- **[User guide](docs/USER_GUIDE.md)** — UI, Fill vs Propose, import formats, consequence chains
+- **[Deployment](docs/DEPLOYMENT.md)** — Apache + FTP hosting (no shell on server)
