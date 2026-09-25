@@ -2,6 +2,8 @@
 
 This page is for **you** if you are on a **phone**, use **FTP** to upload a website, and do **not** use command-line tools day to day.
 
+**Your GitHub is `51monharr15`.** The files are **not** there yet unless you copy them once. See **[GITHUB-51monharr15.md](./GITHUB-51monharr15.md)**.
+
 ---
 
 ## Part 1 — Using the app on your Android phone

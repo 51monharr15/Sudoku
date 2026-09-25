@@ -29,6 +29,7 @@ Install to home screen from the browser for standalone mobile use (service worke
 
 ## Documentation
 
+- **[GitHub for 51monharr15](docs/GITHUB-51monharr15.md)** — copy the repo to **github.com/51monharr15/Sudoku**
 - **[Start here (plain language)](docs/START_HERE.md)** — Android use, what npm/dist are, HTTPS + FTP upload without jargon
 - **[User guide](docs/USER_GUIDE.md)** — UI, Fill vs Propose, import formats, consequence chains
 - **[Deployment](docs/DEPLOYMENT.md)** — Apache + FTP hosting (no shell on server)
