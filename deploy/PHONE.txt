@@ -1,0 +1,31 @@
+SUDOKU — PHONE STEPS
+(no repo, no npm)
+
+TRY THE APP NOW (browser):
+
+https://angry-banks-accept.loca.lt
+
+(loca.lt may ask you to click once to continue — tap the button.)
+
+
+DOWNLOAD ZIP FOR FTP:
+
+https://angry-banks-accept.loca.lt/sudoku-studio-upload.zip
+
+Long-press link → download.
+Unzip.
+FTP all files to your web folder.
+Must include assets folder.
+
+
+YOUR LIVE SITE AFTER FTP:
+
+https://YOUR-DOMAIN/
+
+
+NOTE:
+
+These links run from a temporary cloud computer.
+They may stop working after hours or days.
+Download the zip and FTP to YOUR server
+so you keep a permanent copy.
