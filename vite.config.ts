@@ -3,6 +3,15 @@ import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  server: {
+    host: true,
+    // Cursor cloud port-forwarding uses *.cursorvm.com hostnames.
+    allowedHosts: ['.cursorvm.com'],
+  },
+  preview: {
+    host: true,
+    allowedHosts: ['.cursorvm.com'],
+  },
   plugins: [
     react(),
     VitePWA({
