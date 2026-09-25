@@ -87,14 +87,16 @@ Your setup: **Apache**, **HTTPS**, upload by **FTP**, no shell. That works.
 
 ### Ready-made files (no npm on your phone)
 
-In this project, open the **`deploy`** folder. You will find:
+In this project, open the **`deploy`** folder on branch **`main`**. You will find:
 
 | File | Purpose |
 |------|---------|
-| **`sudoku-studio-upload.zip`** | The whole website — download this to your phone |
-| **`UPLOAD-FROM-PHONE.txt`** | Short numbered steps: unzip → FTP → open https |
+| **`HOW-TO-GET-THE-ZIP-ON-PHONE.txt`** | **Read this first** if the `.zip` link will not download |
+| **`sudoku-studio-upload.zip.base64.txt`** | Text file you **can** save on a phone → turn back into `.zip` |
+| **`website/`** folder | Same site as separate files — FTP upload each one |
+| **`UPLOAD-FROM-PHONE.txt`** | After you have the files: FTP → open https |
 
-You do **not** need to run npm yourself if you use that zip.
+The code browser often **will not download `.zip` files**. Use the **`.base64.txt`** file or the **`website/`** folder instead.
 
 ### What you upload
 
