@@ -1,5 +1,7 @@
 # Hosting Sudoku Studio on Apache (FTP only)
 
+**New to npm and builds?** Read **[START_HERE.md](./START_HERE.md)** first (plain language, Android-friendly).
+
 ## Is Apache + PHP suitable?
 
 **Yes for Apache. PHP is optional and not used by this app.**

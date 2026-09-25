@@ -1,6 +1,8 @@
 # Sudoku Studio — User Guide
 
-Sudoku Studio is a **mobile-first web app** (installable as a PWA) for solving Sudoku on phone or desktop. It helps you **see what a move would force** before you commit it—not only whether a digit is legal in one cell.
+**Using a phone and not familiar with npm or servers?** See **[START_HERE.md](./START_HERE.md)** first.
+
+Sudoku Studio is a **mobile-first web app** (installable from your home screen) for solving Sudoku on phone or desktop. It helps you **see what a move would force** before you commit it—not only whether a digit is legal in one cell.
 
 ---
 
