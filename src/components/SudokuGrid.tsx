@@ -1,8 +1,15 @@
-import { colOf, rowOf } from '../sudoku/grid'
-import { maskDigits } from '../sudoku/grid'
+import { colOf, rowOf, maskDigits } from '../sudoku/grid'
 import type { CandidateMask, CellValue, Digit, Grid } from '../sudoku/types'
 
-export type CellHighlight = 'proposed' | 'elimination' | 'forced' | 'peer' | 'selected' | 'related'
+export type CellHighlight =
+  | 'proposed'
+  | 'elimination'
+  | 'forced'
+  | 'peer'
+  | 'selected'
+  | 'related'
+  | 'digit-match'
+  | 'strong-link'
 
 interface SudokuGridProps {
   values: Grid
@@ -11,6 +18,8 @@ interface SudokuGridProps {
   showCandidates: boolean
   selectedCell: number | null
   highlights: Map<number, CellHighlight>
+  /** Selected digits to emphasize in pencil marks */
+  filterDigits: Digit[]
   previewValues: Grid | null
   activeChainCell: number | null
   onSelectCell: (cell: number) => void
@@ -39,11 +48,13 @@ export function SudokuGrid({
   showCandidates,
   selectedCell,
   highlights,
+  filterDigits,
   previewValues,
   activeChainCell,
   onSelectCell,
 }: SudokuGridProps) {
   const display = previewValues ?? values
+  const filterOn = filterDigits.length > 0
 
   return (
     <div className="grid-wrap" role="grid" aria-label="Sudoku board">
@@ -63,14 +74,27 @@ export function SudokuGrid({
             onClick={() => onSelectCell(cell)}
           >
             {displayValue !== 0 ? (
-              <span className={`digit ${isGiven ? 'given' : 'user'}`}>{displayValue}</span>
+              <span
+                className={`digit ${isGiven ? 'given' : 'user'} ${
+                  filterOn && filterDigits.includes(displayValue) ? 'digit-em' : ''
+                }`}
+              >
+                {displayValue}
+              </span>
             ) : showCandidates && cands.length > 0 ? (
-              <span className="candidates">
+              <span className={`candidates ${filterOn ? 'filter-on' : ''}`}>
                 {Array.from({ length: 9 }, (_, i) => {
                   const d = (i + 1) as Digit
+                  const on = cands.includes(d)
+                  const em = filterOn && filterDigits.includes(d)
                   return (
-                    <span key={d} className={cands.includes(d) ? 'cand on' : 'cand off'}>
-                      {cands.includes(d) ? d : ''}
+                    <span
+                      key={d}
+                      className={
+                        on ? (em ? 'cand on cand-em' : filterOn ? 'cand on cand-dim' : 'cand on') : 'cand off'
+                      }
+                    >
+                      {on ? d : ''}
                     </span>
                   )
                 })}

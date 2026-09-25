@@ -12,6 +12,9 @@ export type ChainStepKind =
   | 'eliminate'
   | 'naked_single'
   | 'hidden_single'
+  | 'pointing'
+  | 'locked'
+  | 'strong_link'
 
 export interface ChainStep {
   id: number

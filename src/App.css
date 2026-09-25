@@ -15,6 +15,8 @@
   --hl-peer: rgba(255, 255, 255, 0.06);
   --hl-selected: rgba(233, 69, 96, 0.2);
   --hl-related: rgba(180, 140, 255, 0.25);
+  --hl-digit: rgba(120, 220, 160, 0.35);
+  --hl-strong: rgba(255, 120, 255, 0.4);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   color: var(--text);
   background: var(--bg);
@@ -100,7 +102,22 @@ body {
 
 .mode-bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+}
+
+.strong-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.hint-bar {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.35;
 }
 
 .grid-wrap {
@@ -168,6 +185,15 @@ body {
   background: var(--hl-related);
 }
 
+.cell.hl-digit-match {
+  background: var(--hl-digit);
+}
+
+.cell.hl-strong-link {
+  box-shadow: inset 0 0 0 2px #ff78ff;
+  background: var(--hl-strong);
+}
+
 .cell.chain-focus {
   outline: 2px solid #b48cff;
   outline-offset: -2px;
@@ -212,6 +238,20 @@ body {
   visibility: hidden;
 }
 
+.cand-dim {
+  opacity: 0.25;
+}
+
+.cand-em {
+  color: #7dffb2;
+  font-weight: 800;
+}
+
+.digit-em {
+  color: #7dffb2 !important;
+  text-shadow: 0 0 8px rgba(125, 255, 178, 0.5);
+}
+
 .numpad {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -236,6 +276,15 @@ body {
   font-weight: 600;
 }
 
+.num.picked {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+}
+
+.num.last-picked {
+  box-shadow: 0 0 0 2px #7dffb2;
+}
+
 .propose-bar {
   display: flex;
   gap: 8px;
@@ -251,6 +300,24 @@ body {
   padding: 12px 14px;
   max-height: 28dvh;
   overflow: auto;
+}
+
+.chain-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.chain-head h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.chain-nav {
+  display: flex;
+  gap: 6px;
 }
 
 .chain-panel h2 {

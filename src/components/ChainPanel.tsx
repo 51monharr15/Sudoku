@@ -5,6 +5,7 @@ interface ChainPanelProps {
   steps: ChainStep[]
   activeStepId: number | null
   onSelectStep: (stepId: number | null) => void
+  onStepOffset: (delta: number) => void
   error?: string
 }
 
@@ -18,10 +19,22 @@ function kindLabel(kind: ChainStep['kind']): string {
       return 'Naked single'
     case 'hidden_single':
       return 'Hidden single'
+    case 'pointing':
+      return 'Pointing'
+    case 'locked':
+      return 'Locked'
+    case 'strong_link':
+      return 'Strong link'
   }
 }
 
-export function ChainPanel({ steps, activeStepId, onSelectStep, error }: ChainPanelProps) {
+export function ChainPanel({
+  steps,
+  activeStepId,
+  onSelectStep,
+  onStepOffset,
+  error,
+}: ChainPanelProps) {
   if (error) {
     return (
       <section className="chain-panel">
@@ -36,18 +49,30 @@ export function ChainPanel({ steps, activeStepId, onSelectStep, error }: ChainPa
       <section className="chain-panel">
         <h2>Consequence chain</h2>
         <p className="chain-hint">
-          Select an empty cell, choose a digit, and tap <strong>Preview</strong> to see forced
-          follow-ups.
+          Propose: select digit(s), tap cell. Step with Prev/Next when a chain exists.
         </p>
       </section>
     )
   }
 
+  const idx = steps.findIndex((s) => s.id === activeStepId)
+  const stepNum = idx >= 0 ? idx + 1 : 1
+
   return (
     <section className="chain-panel">
-      <h2>Consequence chain ({steps.length})</h2>
+      <div className="chain-head">
+        <h2>Chain {stepNum}/{steps.length}</h2>
+        <div className="chain-nav">
+          <button type="button" className="btn ghost small" onClick={() => onStepOffset(-1)}>
+            Prev
+          </button>
+          <button type="button" className="btn ghost small" onClick={() => onStepOffset(1)}>
+            Next
+          </button>
+        </div>
+      </div>
       <ol className="chain-list">
-        {steps.map((step) => {
+        {steps.map((step, i) => {
           const active = activeStepId === step.id
           return (
             <li key={step.id}>
@@ -56,7 +81,9 @@ export function ChainPanel({ steps, activeStepId, onSelectStep, error }: ChainPa
                 className={`chain-step ${active ? 'active' : ''} kind-${step.kind}`}
                 onClick={() => onSelectStep(active ? null : step.id)}
               >
-                <span className="chain-kind">{kindLabel(step.kind)}</span>
+                <span className="chain-kind">
+                  {i + 1}. {kindLabel(step.kind)}
+                </span>
                 <span className="chain-detail">
                   R{rowOf(step.cell) + 1}C{colOf(step.cell) + 1} · {step.digit}
                 </span>

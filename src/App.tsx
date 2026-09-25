@@ -4,9 +4,10 @@ import { ChainPanel } from './components/ChainPanel'
 import { ImportModal } from './components/ImportModal'
 import { SudokuGrid, type CellHighlight } from './components/SudokuGrid'
 import { computeCandidates } from './sudoku/candidates'
-import { cloneGrid } from './sudoku/grid'
+import { cloneGrid, maskHas } from './sudoku/grid'
 import { importPuzzle, SAMPLE_PUZZLE } from './sudoku/import'
 import { analyzeProposedMove } from './sudoku/implications'
+import { strongLinksForSelection } from './sudoku/strongLinks'
 import type { Digit, Grid, ProposedMoveAnalysis } from './sudoku/types'
 
 type InputMode = 'value' | 'propose'
@@ -29,19 +30,54 @@ export default function App() {
   const [activeStepId, setActiveStepId] = useState<number | null>(null)
   const [previewOn, setPreviewOn] = useState(false)
 
+  /** Order preserved; last entry = last selected digit */
+  const [selectedDigits, setSelectedDigits] = useState<Digit[]>([])
+  const [strongN, setStrongN] = useState<2 | 3 | 4>(2)
+  const [showStrongLinks, setShowStrongLinks] = useState(true)
+
+  const lastSelectedDigit = selectedDigits.length > 0 ? selectedDigits[selectedDigits.length - 1] : null
+
   const candidates = useMemo(() => computeCandidates(values), [values])
+
+  const strongLinkCells = useMemo(() => {
+    if (!showStrongLinks) return new Set<number>()
+    const groups = strongLinksForSelection(candidates, strongN, selectedDigits)
+    const cells = new Set<number>()
+    for (const g of groups) for (const c of g.cells) cells.add(c)
+    return cells
+  }, [candidates, strongN, selectedDigits, showStrongLinks])
 
   const highlights = useMemo(() => {
     const map = new Map<number, CellHighlight>()
-    if (analysis && previewOn) {
-      for (const [cell, role] of analysis.highlights) {
-        map.set(cell, role)
+
+    if (!previewOn && selectedDigits.length > 0) {
+      for (let cell = 0; cell < 81; cell++) {
+        const v = values[cell]
+        let match = false
+        for (const d of selectedDigits) {
+          if (v === d) match = true
+          else if (v === 0 && maskHas(candidates[cell], d)) match = true
+        }
+        if (match) map.set(cell, 'digit-match')
       }
     }
-    if (selectedCell !== null) {
-      if (!map.has(selectedCell)) map.set(selectedCell, 'selected')
-      else map.set(selectedCell, 'selected')
+
+    if (!previewOn && showStrongLinks) {
+      for (const c of strongLinkCells) {
+        if (!map.has(c)) map.set(c, 'strong-link')
+      }
     }
+
+    if (analysis && previewOn) {
+      for (const [cell, role] of analysis.highlights) {
+        map.set(cell, role as CellHighlight)
+      }
+    }
+
+    if (selectedCell !== null) {
+      map.set(selectedCell, previewOn ? (map.get(selectedCell) ?? 'selected') : 'selected')
+    }
+
     if (activeStepId !== null && analysis) {
       const step = analysis.steps.find((s) => s.id === activeStepId)
       if (step) {
@@ -52,7 +88,17 @@ export default function App() {
       }
     }
     return map
-  }, [analysis, previewOn, selectedCell, activeStepId])
+  }, [
+    analysis,
+    previewOn,
+    selectedCell,
+    activeStepId,
+    selectedDigits,
+    values,
+    candidates,
+    strongLinkCells,
+    showStrongLinks,
+  ])
 
   const activeChainCell = useMemo(() => {
     if (activeStepId === null || !analysis) return null
@@ -71,26 +117,40 @@ export default function App() {
     [values],
   )
 
-  const applyDigit = useCallback(
-    (digit: Digit) => {
-      if (selectedCell === null) return
-      if (givens[selectedCell]) return
+  const toggleDigit = useCallback((digit: Digit) => {
+    setSelectedDigits((prev) => {
+      const i = prev.indexOf(digit)
+      if (i >= 0) {
+        const next = [...prev.slice(0, i), ...prev.slice(i + 1)]
+        return next
+      }
+      return [...prev, digit]
+    })
+  }, [])
+
+  const handleCell = useCallback(
+    (cell: number) => {
+      setSelectedCell(cell)
+      const digit = lastSelectedDigit
+      if (digit === null || givens[cell]) return
 
       if (inputMode === 'propose') {
-        runPreview(selectedCell, digit)
+        runPreview(cell, digit)
         return
       }
 
-      setValues((prev) => {
-        const next = cloneGrid(prev)
-        next[selectedCell] = digit
-        return next
-      })
-      setAnalysis(null)
-      setPreviewOn(false)
-      setActiveStepId(null)
+      if (values[cell] === 0 || !givens[cell]) {
+        setValues((prev) => {
+          const next = cloneGrid(prev)
+          next[cell] = digit
+          return next
+        })
+        setAnalysis(null)
+        setPreviewOn(false)
+        setActiveStepId(null)
+      }
     },
-    [selectedCell, givens, inputMode, runPreview],
+    [lastSelectedDigit, givens, inputMode, runPreview, values],
   )
 
   const clearCell = useCallback(() => {
@@ -112,6 +172,18 @@ export default function App() {
     setActiveStepId(null)
   }, [analysis])
 
+  const handleStepOffset = useCallback(
+    (delta: number) => {
+      if (!analysis?.steps.length) return
+      const steps = analysis.steps
+      const idx = steps.findIndex((s) => s.id === activeStepId)
+      const base = idx >= 0 ? idx : 0
+      const next = (base + delta + steps.length) % steps.length
+      setActiveStepId(steps[next].id)
+    },
+    [analysis, activeStepId],
+  )
+
   const handleImport = (text: string) => {
     try {
       const result = importPuzzle(text)
@@ -121,6 +193,7 @@ export default function App() {
       setAnalysis(null)
       setPreviewOn(false)
       setSelectedCell(null)
+      setSelectedDigits([])
     } catch (e) {
       setImportError(e instanceof Error ? e.message : 'Import failed')
     }
@@ -150,9 +223,10 @@ export default function App() {
         showCandidates={showCandidates}
         selectedCell={selectedCell}
         highlights={highlights}
+        filterDigits={previewOn ? [] : selectedDigits}
         previewValues={previewValues}
         activeChainCell={activeChainCell}
-        onSelectCell={setSelectedCell}
+        onSelectCell={handleCell}
       />
 
       <div className="mode-bar">
@@ -177,11 +251,47 @@ export default function App() {
         >
           Candidates
         </button>
+        <button
+          type="button"
+          className={`btn toggle ${showStrongLinks ? 'on' : ''}`}
+          onClick={() => setShowStrongLinks((v) => !v)}
+        >
+          Strong
+        </button>
       </div>
+
+      <div className="strong-bar" role="group" aria-label="Strong link size">
+        {([2, 3, 4] as const).map((n) => (
+          <button
+            key={n}
+            type="button"
+            className={`btn toggle small ${strongN === n ? 'on' : ''}`}
+            onClick={() => setStrongN(n)}
+          >
+            n={n}
+          </button>
+        ))}
+        {selectedDigits.length > 0 && (
+          <button type="button" className="btn ghost small" onClick={() => setSelectedDigits([])}>
+            Clear #
+          </button>
+        )}
+      </div>
+
+      <p className="hint-bar">
+        Tap digits to highlight (tap again to off). Last # + cell → {inputMode === 'propose' ? 'propose' : 'fill'}.
+      </p>
 
       <div className="numpad" role="group" aria-label="Digits">
         {([1, 2, 3, 4, 5, 6, 7, 8, 9] as const).map((n) => (
-          <button key={n} type="button" className="num" onClick={() => applyDigit(n)}>
+          <button
+            key={n}
+            type="button"
+            className={`num ${selectedDigits.includes(n) ? 'picked' : ''} ${
+              lastSelectedDigit === n ? 'last-picked' : ''
+            }`}
+            onClick={() => toggleDigit(n)}
+          >
             {n}
           </button>
         ))}
@@ -219,6 +329,7 @@ export default function App() {
         steps={previewOn && analysis ? analysis.steps : []}
         activeStepId={activeStepId}
         onSelectStep={setActiveStepId}
+        onStepOffset={handleStepOffset}
         error={analysis && !analysis.valid ? analysis.error : undefined}
       />
 
