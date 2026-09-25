@@ -1,69 +1,60 @@
-# UI design — open decisions
+# UI requirements — confirmed & pending
 
-Implemented defaults are marked **(default)**. Tell us what you prefer.
-
----
-
-## Number selection vs Fill
-
-**(default)** Tap a numpad digit toggles highlight on/off.  
-Fill: pick digit(s), then tap cell (uses **last** selected digit).  
-Propose: pick digit, then tap cell.
-
-**Open:** Should tap digit **without** highlight mode still work as “cell first, then digit” only?
+**Process:** Do not treat UI as final until user signs off here.
 
 ---
 
-## Colours for multiple digits
+## Confirmed (user 2026-09-25)
 
-**(default)** One highlight style; cells match if **any** selected digit fits.
-
-**Open:** Different colour per selected digit (1=red, 2=blue, …)?
-
----
-
-## Strong links — definition
-
-**(default)** For n=2|3|4:
-
-- **Hidden:** digit X as candidate in exactly n cells in a row/col/box.  
-- **Naked:** n cells whose union of candidates is exactly n digits.
-
-**Open:** Include **bivalue strong edges** (X candidate in exactly two cells in unit) as separate from hidden pair?
-
-**Open:** Show strong links only when at least one selected digit is involved, or always when n toggle on?
+1. **Digit highlight colours:** different colour **per digit** (1–9).
+2. **Strong links:** show when **Strong** toggle is on (not gated on selected digits).
+3. **Pointing / locked in chains:** **yes** — box↔line reductions (pointing pair/triple, claiming).
+4. **Multi-digit logic:** **yes** — e.g. skyscraper-style, not single-digit only.
 
 ---
 
-## Chain steps — taxonomy
+## Pending — need user answer
 
-**(default)** Engine still emits: proposed, eliminate, naked_single, hidden_single.  
-UI adds **Prev / Next** stepping. Labels “pointing / locked” reserved for a later solver pass.
+### Q5 — Digit highlights during Propose preview
 
-**Open:** Should “locked candidate” mean pointing pair + line/box reduction in your vocabulary?
+When you **Propose** (temporary “what if” grid + chain):
 
-**Open:** “If not A must be B” — binary chain on one digit only, or grouped implications?
+- **A)** Keep digit highlights (tap 5, green cells stay) **on top of** preview colours.
+- **B)** Hide digit highlights until you tap **Dismiss preview**.
+- **C)** Dim digit highlights but keep them visible.
+
+*Reply A, B, or C.*
+
+### Q6 — What “Fill” is for + rule errors
+
+Two different jobs:
+
+| Mode | Purpose |
+|------|---------|
+| **Enter puzzle** | Building/importing **givens** (clues), or fixing setup |
+| **Solve** | Playing: placing **your** answers in empty cells |
+
+*Which should **Fill** mean by default?* Enter / Solve / both with a separate toggle?
+
+**Rule break (your example):** placing a 2nd same digit in a row/col/box.
+
+*Desired behaviour (pick or describe):*
+
+- Block the digit (not placed)?
+- Place but show error (banner + highlight conflicting cells)?
+- Allow but mark cell red until fixed?
 
 ---
 
-## Pencil highlight
+## Not yet implemented (waiting sign-off)
 
-**(default)** Non-selected pencil marks stay visible but dimmed; selected digits bright.
-
-**Open:** Hide all other pencil marks entirely when filtering?
-
----
-
-## Preview vs highlights
-
-**(default)** Propose preview dims digit highlights until dismissed.
-
-**Open:** Keep digit highlights visible during preview?
+- Per-digit highlight colours (current build uses one green style).
+- Strong links only when Strong on (partially there; refine per spec).
+- Pointing / locked / skyscraper in solver + chain steps.
+- Fill vs Enter + conflict UX.
 
 ---
 
-## Phone layout
+## Current branch note
 
-**(default)** Strong n (2/3/4) on a second row under mode bar.
-
-**Open:** Move numpad above grid?
+`cursor/ui-highlight-propose-a929` has exploratory UI. Treat as **draft** until this doc is approved and work is explicitly requested.
