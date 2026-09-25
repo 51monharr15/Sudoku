@@ -22,14 +22,9 @@ Download zip on phone → unzip → FTP.
 
 ## Option C — Agent uploads for you (FTP)
 
-Put credentials in **Cursor Environment secrets** (not chat):
+Step-by-step: **docs/CURSOR-FTP-SECRETS.md**
 
-- `FTP_HOST`
-- `FTP_USER`
-- `FTP_PASS`
-- `FTP_REMOTE_DIR` (e.g. `/public_html`)
-
-Then ask: “Deploy deploy/website to FTP from secrets.”
+Short version: Cursor **Dashboard → Cloud Agents → Secrets** → add `FTP_HOST`, `FTP_USER`, `FTP_PASS`, `FTP_REMOTE_DIR` → **start a new agent** → say “run ftp deploy”.
 
 ---
 
