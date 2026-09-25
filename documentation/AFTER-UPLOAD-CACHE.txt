@@ -25,7 +25,10 @@ CHECK
   If 404,  assets  folder did not upload correctly.
 
 
+TWO VERSION CHECKS (must match each other)
+  1. Under title in app:  2026.09.25.1  (hardcoded in app)
+  2. In browser open:  https://YOUR-DOMAIN/VERSION  (text file on server)
+
 YOU SHOULD SEE
-  Under title: version 2026.09.25.1  (or newer)
   Fill | Propose | Candidates | Strong
   Row: n=2  n=3  n=4

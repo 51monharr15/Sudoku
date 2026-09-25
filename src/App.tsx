@@ -8,6 +8,7 @@ import { cloneGrid, conflictingCells, maskHas } from './sudoku/grid'
 import { importPuzzle, SAMPLE_PUZZLE } from './sudoku/import'
 import { analyzeProposedMove } from './sudoku/implications'
 import { strongLinksForN } from './sudoku/strongLinks'
+import { APP_VERSION } from './appVersion'
 import type { Digit, Grid, ProposedMoveAnalysis } from './sudoku/types'
 
 type InputMode = 'value' | 'propose'
@@ -254,8 +255,8 @@ export default function App() {
       <header className="top-bar">
         <div className="title-block">
           <h1>Sudoku Studio</h1>
-          <span className="app-version" title="Build version">
-            {__APP_VERSION__}
+          <span className="app-version" title="Must match VERSION file on server">
+            {APP_VERSION}
           </span>
         </div>
         <div className="top-actions">

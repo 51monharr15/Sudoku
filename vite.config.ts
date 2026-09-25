@@ -1,14 +1,8 @@
-import { readFileSync } from 'node:fs'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
-const appVersion = readFileSync(new URL('./VERSION', import.meta.url), 'utf8').trim()
-
 export default defineConfig({
-  define: {
-    __APP_VERSION__: JSON.stringify(appVersion),
-  },
   // Relative paths so FTP works in any folder (not only domain root).
   base: './',
   server: {
