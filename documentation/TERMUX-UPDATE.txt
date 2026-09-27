@@ -1,0 +1,27 @@
+TERMUX — GET UPDATES (git pull)
+================================
+
+If you see:  fatal: not a git repository
+Your ~/Sudoku folder was copied/unzipped — not cloned. Fix once:
+
+
+ONE-TIME (replace with a real clone)
+------------------------------------
+  cd ~
+  mv Sudoku Sudoku-old
+  pkg install git -y
+  git clone https://origin.cursor.com/git/51mon/Sudoku.git Sudoku
+  cd Sudoku
+  npm install
+
+If clone asks for password: use a Cursor/Origin personal access token (not your normal password).
+
+
+EVERY UPDATE AFTER THAT
+-----------------------
+  cd ~/Sudoku
+  git pull origin main
+  npm install
+  npm run dev
+
+Check version at bottom of app: should match file VERSION in repo root.
