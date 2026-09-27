@@ -112,7 +112,7 @@ Region = row | column | 3×3 box.
 |----|----------|
 | **Q0** | **Pane vs window:** Is the table above what you mean? Should “cycle panes” be bottom tabs, swipe, or menu? → **Answer: B — swipe left/right** |
 | **Q1** | **4.1:** Highlight technique types — **step through**, **toggles**, or **both**? → **Answer: C — both** |
-| **Q2** | **CL pane:** Separate pane from grid (swipe to), or strip under grid within pane 1? |
+| **Q2** | CL layout separate vs strip → **user undecided; spec holds:** fwd/back + step on **grid window**; technique index optional swipe window. |
 | **Q3** | **Apply all:** One button always visible, or only when pending candidate updates exist? |
 | **Q4** | **Pencil marks:** User-only, auto-synced from logic, or merge both? |
 | **Q5** | **Multi-cell tap:** After picking digit, one cell per tap only, or drag/select multiple? |
