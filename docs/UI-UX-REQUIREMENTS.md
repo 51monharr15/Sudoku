@@ -42,25 +42,35 @@
 - Always **select digit 1–9 first**, then **tap cell(s)** to apply.
 - Each user edit is a **manual change event (MCE)**.
 
-### 3. Consequence navigation
+### 3. Consequence list (CL) — navigation (Q2 held in spec)
 
-- After an MCE, button(s) to **advance / backtrack** through **consequences** from analysis of that move (adding a solution # or removing an eliminated candidate).
+- **Every MCE** recalculates the CL from the new grid state.
+- **Main grid window:** show **current step** in the chain **on the board** (highlights) + **Forward / Back** (no scroll-off controls).
+- **Q2 (user undecided):** *Held for build:* stepping stays on **grid pane**; swipe to another **window** only for optional **technique index** (name + count), not required for fwd/back.
 
-### 4. Analysis on MCE
+### 4. CL step order (after MCE)
 
-On each MCE, assess grid for:
+Fixed start:
 
-- **Singles** — digit valid in only one cell in a region.
-- **Doubles / triples / quads** — 2/3/4 digits valid in exactly 2/3/4 cells of a region (**naked or hidden**).
-- **Region** = row | column | 3×3 box.
+1. **Naked singles**
+2. **Hidden singles**
 
-**4.1 — Open:** Step through singles → doubles → triples → quads **one highlight at a time**, vs **toggle** each type on/off, vs **both**? *(User asked — do not assume.)*
+Then (in this order; each step is one find in the list — **Q1: toggles + step through**):
 
-**4.2 — Naked singles (NS):** When MCE occurs and **consequence list (CL)** is active, show NS with option to **set NS as solution**; **CL updates**.
+3. Naked pairs  
+4. Hidden pairs  
+5. Naked triples  
+6. Hidden triples  
+7. Naked / hidden quads  
+8. Pointing pairs / triples (box ↔ line)  
+9. X-Wing, Swordfish (etc. when present)  
+10. XY-Wing, XYZ-Wing  
+11. Skyscraper, 2-string kite  
+12. Strong / weak link eliminations  
 
-**4.3 — CL patterns:** Include **X-Wings, skyscrapers, 2-string kites**, and other known patterns. **Pane:** list **techniques active** for current state with **occurrence count**; option to highlight **each / all** occurrences **in turn** by type.
+When **naked singles** appear in CL: offer **set as solution** → new MCE → **CL rebuilds**.
 
-**4.4 — Strong / weak bi-value chains:** When combinations imply **new eliminations**, **CL updates**.
+Region = row | column | 3×3 box.
 
 ### 5. Compact numpad
 
