@@ -14,9 +14,7 @@
 |------|------------------------------|
 | **Pane** | A major screen region the user can **cycle to** (like a tab or full-screen slice). |
 | **Window** | A view **inside** a pane (e.g. grid view is one window in pane 1). |
-| **Secret pane** | Hidden pane/tab (gesture or menu) showing alternate or duplicate controls/views. |
-
-*User question: Is pane vs window used in an understood way?* → **Open question Q0.**
+*User question: Is pane vs window used in an understood way?* → **Answered Q0 (swipe).**
 
 ---
 
@@ -27,7 +25,9 @@
 3. **Space:** Screen space is scarce — no wasted chrome (see change 1).
 4. **Help:** User guide **from the UI**, opening at the **section relevant to current context**.
 5. **Pane 1:** Holds a **window of current grid state** only (no other windows in this pane yet).
-6. **Secret pane:** Reveals alternative pane with different or duplicate elements.
+---
+
+~~Secret pane~~ — **removed** (not a agreed requirement; drop unless you reintroduce it).
 
 ---
 
@@ -103,16 +103,15 @@ On each MCE, assess grid for:
 |----|----------|
 | **Q0** | **Pane vs window:** Is the table above what you mean? Should “cycle panes” be bottom tabs, swipe, or menu? → **Answer: B — swipe left/right** |
 | **Q1** | **4.1:** Highlight technique types — **step through**, **toggles**, or **both**? → **Answer: C — both** |
-| **Q2** | **Secret pane:** How opened (long-press, menu, gesture)? What goes there vs main pane? |
-| **Q3** | **CL pane:** Separate pane from grid, or strip under grid within pane 1? |
-| **Q4** | **Apply all:** One button always visible, or only when pending candidate updates exist? |
-| **Q5** | **Pencil marks:** User-only, auto-synced from logic, or merge both? |
-| **Q6** | **Multi-cell tap:** After picking digit, one cell per tap only, or drag/select multiple? |
-| **Q7** | **Menu:** Hamburger top-right OK for Import, guide, version? |
-| **Q8** | **MCE + CL:** Auto-open CL on every MCE, or only when user taps “Analyse”? |
+| **Q2** | **CL pane:** Separate pane from grid (swipe to), or strip under grid within pane 1? |
+| **Q3** | **Apply all:** One button always visible, or only when pending candidate updates exist? |
+| **Q4** | **Pencil marks:** User-only, auto-synced from logic, or merge both? |
+| **Q5** | **Multi-cell tap:** After picking digit, one cell per tap only, or drag/select multiple? |
+| **Q6** | **Menu:** Hamburger top-right OK for Import, guide, version? |
+| **Q7** | **MCE + CL:** Auto-open CL on every MCE, or only when user taps “Analyse”? |
 
 ---
 
 ## Sign-off
 
-Edit this file or answer **Q0–Q8** in chat → when correct, reply **UX GO**.
+Edit this file or answer open **Q** items in chat → when correct, reply **UX GO**.
