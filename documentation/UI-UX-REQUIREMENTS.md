@@ -145,7 +145,7 @@ Pad digit selected:
 | **Q5** | Digit selected → highlight grid; tap many cells (set/toggle) until digit deselected or another digit chosen → **Answered:** §5b. |
 | **Q5a** | Highlight value cells + candidate slices → **C** |
 | **Q5b** | Shade / highlight grammar → **draft for prototype** (see § Principles); amend after seeing UI. |
-| **Q6** | **Menu:** Top-right **☰** opens Import puzzle, Getting started guide (context section), version string — OK? (yes/no/other placement) |
+| **Q6** | Top-right **☰**: Import, guide (context section), version → **Yes.** Same header row/column may hold **other compact controls** — use space wisely (TBD in prototype). |
 | **Q7** | **After each MCE:** CL rebuilds automatically; should UI **jump to step 1** of new CL immediately, or stay on current step until user taps **Analyse** / **Forward**? |
 
 ---

@@ -30,14 +30,9 @@
 - **User direction:** **Background shade** by **candidate count in the cell** (singleton / doubleton / tripleton / quad = 1/2/3/4 pencils left in that cell) may work as visual grammar.
 - **Pad digit selected:** still **whole cell** if solution/given matches; **1/9 slice** if that digit is still a candidate (§5b). Shade by count is **orthogonal** (can combine).
 
-**Q5b — pick when shades apply (one answer):**
+**Cell contents (no “empty” cells):** each cell is **given**, **entered/worked solution**, or a **candidate set** (pencils). Highlights apply when **rules + context** warrant (pad digit selected, CL step, etc.).
 
-| Code | When user sees count-based background shade |
-|------|---------------------------------------------|
-| **S-A** | **Always** on empty cells (subtle; shows 1–4 remaining at a glance). |
-| **S-B** | **Only while** a pad digit is selected (shade + slice/cell highlight together). |
-| **S-C** | **Only during CL step** (shade marks cells that are part of the current finding, e.g. pair members). |
-| **S-D** | **A + C** (always subtle count shade; stronger shade on CL step). |
+**Q5b — visual grammar:** Count-based **background shade** (singleton / doubleton / tripleton / quad **member**) is a **draft**; **will change after a visual prototype**. Do not lock nine text colours. Candidate identity = **position in 9-slot cell**, not hue per digit.
 3. **Space:** Screen space is scarce — no wasted chrome (see change 1).
 4. **Help:** User guide **from the UI**, opening at the **section relevant to current context**.
 5. **Pane 1:** Holds **current grid state** (main play pane).
@@ -149,8 +144,8 @@ Pad digit selected:
 | **Q4** | Candidates + MCE + CL + Apply → **Answered:** see §4b (auto baseline; MCE only edits; CL highlights; Apply for eliminations). |
 | **Q5** | Digit selected → highlight grid; tap many cells (set/toggle) until digit deselected or another digit chosen → **Answered:** §5b. |
 | **Q5a** | Highlight value cells + candidate slices → **C** |
-| **Q5b** | No 9 text colours; count-based **background shade** → **open:** S-A / S-B / S-C / S-D in § Principles |
-| **Q6** | **Menu:** Top-right **☰** opens Import puzzle, Getting started guide (context section), version string — OK? (yes/no/other placement) |
+| **Q5b** | Shade / highlight grammar → **draft for prototype** (see § Principles); amend after seeing UI. |
+| **Q6** | Top-right **☰**: Import, guide (context section), version → **Yes.** Same header row/column may hold **other compact controls** — use space wisely (TBD in prototype). |
 | **Q7** | **After each MCE:** CL rebuilds automatically; should UI **jump to step 1** of new CL immediately, or stay on current step until user taps **Analyse** / **Forward**? |
 
 ---
