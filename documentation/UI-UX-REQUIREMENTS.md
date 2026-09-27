@@ -72,6 +72,13 @@ When **naked singles** appear in CL: offer **set as solution** → new MCE → *
 
 Region = row | column | 3×3 box.
 
+### 4b. Candidates (Q4)
+
+- **At display / after givens:** candidates = digits **not already placed** in that cell’s row, column, or box (standard exclusion).
+- **Only an MCE** changes a **solution #** and/or a **candidate #** on the grid.
+- **CL does not silently edit** the grid; it **highlights** findings (naked/hidden single, bi-values, chains, eliminations, etc.).
+- **Apply** (when CL has eliminations but no singles to place): user confirms **candidate eliminations** CL proposes (e.g. bi-value in a box ruling out old pencils). Ties to **Q3** — Apply control visible when there is something to apply.
+
 ### 5. Compact numpad
 
 - **Mode toggle:** **solution #** vs **candidate / pencil**.
@@ -114,7 +121,7 @@ Region = row | column | 3×3 box.
 | **Q1** | **4.1:** Highlight technique types — **step through**, **toggles**, or **both**? → **Answer: C — both** |
 | **Q2** | CL layout separate vs strip → **user undecided; spec holds:** fwd/back + step on **grid window**; technique index optional swipe window. |
 | **Q3** | **Apply all:** Show only when there are pending updates to apply (hide when it would do nothing). → **Answer: B** |
-| **Q4** | **Pencil marks:** User-only, auto-synced from logic, or merge both? |
+| **Q4** | Candidates + MCE + CL + Apply → **Answered:** see §4b (auto baseline; MCE only edits; CL highlights; Apply for eliminations). |
 | **Q5** | **Multi-cell tap:** After picking digit, one cell per tap only, or drag/select multiple? |
 | **Q6** | **Menu:** Hamburger top-right OK for Import, guide, version? |
 | **Q7** | **MCE + CL:** Auto-open CL on every MCE, or only when user taps “Analyse”? |
