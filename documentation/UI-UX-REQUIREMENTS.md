@@ -23,6 +23,16 @@
 
 1. **Panes:** Screen divided into panes/windows; user **cycles** as needed.
 2. **Colour semantics:** Colours apply to **numbers, backgrounds, borders** with consistent meaning.
+
+**Colour semantics — draft options (Q5b, choose one):**
+
+| Option | Solution cell | Candidate 1/9 slice | Digit identity |
+|--------|---------------|---------------------|----------------|
+| **G1 Border** | Thick **border** in one “selected digit” accent; cell fill unchanged | Thin **border** on that mini-cell only | Large **# on pad** + matching border colour (pad shows which digit) |
+| **G2 One accent** | Same pale fill for any selected-digit match | Same pale fill on slice | **Only the numeral** (in cell or slice) uses a fixed palette of 9 **text** colours (small) |
+| **G3 Pattern** | Light diagonal hatch on cell | Dot pattern in slice | No per-digit colour — identity from **pad selection** + hatch vs dots |
+
+*Recommendation to discuss: **G1** (readable, one accent + border weight) or **G2** (colour only on glyphs, not whole cell).*
 3. **Space:** Screen space is scarce — no wasted chrome (see change 1).
 4. **Help:** User guide **from the UI**, opening at the **section relevant to current context**.
 5. **Pane 1:** Holds **current grid state** (main play pane).
@@ -86,9 +96,14 @@ Region = row | column | 3×3 box.
 - **While digit selected:** each **cell tap** set/toggles **solution** or **candidate** (per mode) → **MCE**; user may tap **many cells** in sequence without re-tapping the digit.
 - **Last selected digit** = active for those taps.
 
-### 5b. Digit highlight (Q5 — open sub-question **Q5a**)
+### 5b. Digit highlight (**Q5a = C**)
 
-When a pad digit is selected, highlight cells where that digit is: **(Q5a — confirm)** placed value only / candidate only / both?
+Pad digit selected:
+
+- **Solution / given:** highlight **whole cell** if that digit is the cell value (given or entered).
+- **Candidate:** highlight **that digit’s 1/9 slice** where the digit is still a valid candidate.
+
+**Q5b — visual grammar (pick one):** nine fill colours is noisy; grouped hues (1/4/7, 2/5/8…) still confusing. Options in § Colour semantics below.
 - **Colour (constant semantics):**
   - **Set #** → highlight **whole cell**.
   - **Candidate** → highlight **that digit’s 1/9 slice** of the cell.
@@ -127,7 +142,9 @@ When a pad digit is selected, highlight cells where that digit is: **(Q5a — co
 | **Q2** | CL layout separate vs strip → **user undecided; spec holds:** fwd/back + step on **grid window**; technique index optional swipe window. |
 | **Q3** | **Apply all:** Show only when there are pending updates to apply (hide when it would do nothing). → **Answer: B** |
 | **Q4** | Candidates + MCE + CL + Apply → **Answered:** see §4b (auto baseline; MCE only edits; CL highlights; Apply for eliminations). |
-| **Q5** | Digit selected → highlight grid; tap many cells (set/toggle) until digit deselected or another digit chosen → **Answered:** see §5b. |
+| **Q5** | Digit selected → highlight grid; tap many cells (set/toggle) until digit deselected or another digit chosen → **Answered:** §5b. |
+| **Q5a** | Highlight value cells + candidate slices → **C** |
+| **Q5b** | Visual grammar for 9 digits → **open:** G1 / G2 / G3 in § Principles |
 | **Q6** | **Menu:** Hamburger top-right OK for Import, guide, version? |
 | **Q7** | **MCE + CL:** Auto-open CL on every MCE, or only when user taps “Analyse”? |
 
