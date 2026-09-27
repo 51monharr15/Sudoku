@@ -24,15 +24,20 @@
 1. **Panes:** Screen divided into panes/windows; user **cycles** as needed.
 2. **Colour semantics:** Colours apply to **numbers, backgrounds, borders** with consistent meaning.
 
-**Colour semantics — draft options (Q5b, choose one):**
+**Colour semantics (Q5b — in progress):**
 
-| Option | Solution cell | Candidate 1/9 slice | Digit identity |
-|--------|---------------|---------------------|----------------|
-| **G1 Border** | Thick **border** in one “selected digit” accent; cell fill unchanged | Thin **border** on that mini-cell only | Large **# on pad** + matching border colour (pad shows which digit) |
-| **G2 One accent** | Same pale fill for any selected-digit match | Same pale fill on slice | **Only the numeral** (in cell or slice) uses a fixed palette of 9 **text** colours (small) |
-| **G3 Pattern** | Light diagonal hatch on cell | Dot pattern in slice | No per-digit colour — identity from **pad selection** + hatch vs dots |
+- **Rejected:** 9 text colours for digits 1–9 (candidates are read by **position** in the 9-slot cell).
+- **User direction:** **Background shade** by **candidate count in the cell** (singleton / doubleton / tripleton / quad = 1/2/3/4 pencils left in that cell) may work as visual grammar.
+- **Pad digit selected:** still **whole cell** if solution/given matches; **1/9 slice** if that digit is still a candidate (§5b). Shade by count is **orthogonal** (can combine).
 
-*Recommendation to discuss: **G1** (readable, one accent + border weight) or **G2** (colour only on glyphs, not whole cell).*
+**Q5b — pick when shades apply (one answer):**
+
+| Code | When user sees count-based background shade |
+|------|---------------------------------------------|
+| **S-A** | **Always** on empty cells (subtle; shows 1–4 remaining at a glance). |
+| **S-B** | **Only while** a pad digit is selected (shade + slice/cell highlight together). |
+| **S-C** | **Only during CL step** (shade marks cells that are part of the current finding, e.g. pair members). |
+| **S-D** | **A + C** (always subtle count shade; stronger shade on CL step). |
 3. **Space:** Screen space is scarce — no wasted chrome (see change 1).
 4. **Help:** User guide **from the UI**, opening at the **section relevant to current context**.
 5. **Pane 1:** Holds **current grid state** (main play pane).
@@ -144,9 +149,9 @@ Pad digit selected:
 | **Q4** | Candidates + MCE + CL + Apply → **Answered:** see §4b (auto baseline; MCE only edits; CL highlights; Apply for eliminations). |
 | **Q5** | Digit selected → highlight grid; tap many cells (set/toggle) until digit deselected or another digit chosen → **Answered:** §5b. |
 | **Q5a** | Highlight value cells + candidate slices → **C** |
-| **Q5b** | Visual grammar for 9 digits → **open:** G1 / G2 / G3 in § Principles |
-| **Q6** | **Menu:** Hamburger top-right OK for Import, guide, version? |
-| **Q7** | **MCE + CL:** Auto-open CL on every MCE, or only when user taps “Analyse”? |
+| **Q5b** | No 9 text colours; count-based **background shade** → **open:** S-A / S-B / S-C / S-D in § Principles |
+| **Q6** | **Menu:** Top-right **☰** opens Import puzzle, Getting started guide (context section), version string — OK? (yes/no/other placement) |
+| **Q7** | **After each MCE:** CL rebuilds automatically; should UI **jump to step 1** of new CL immediately, or stay on current step until user taps **Analyse** / **Forward**? |
 
 ---
 
