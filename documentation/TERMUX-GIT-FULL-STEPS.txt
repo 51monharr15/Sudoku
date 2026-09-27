@@ -14,17 +14,15 @@ PART A — ONE-TIME SETUP
 
 2. Install Origin CLI (Termux — if curl|sh fails with "Cannot hard link"):
 
-   mkdir -p ~/.local/bin ~/.local/share/cursor/origin/manual
-   curl -fsSL "https://downloads.cursor.com/co/2026.09.24-20-34-11-8ed25e0/linux-arm64/co.tar.gz" -o /tmp/origin.tar.gz
-   tar --hard-link-copy --no-same-owner -xzf /tmp/origin.tar.gz -C ~/.local/share/cursor/origin/manual
-   cp ~/.local/share/cursor/origin/manual/origin ~/.local/bin/origin
-   chmod +x ~/.local/bin/origin
+   mkdir -p ~/.local/bin
+   curl -fsSL "https://downloads.cursor.com/co/2026.09.24-20-34-11-8ed25e0/linux-arm64/co.tar.gz" -o "$HOME/origin.tar.gz"
+   ls -l "$HOME/origin.tar.gz"
+   (must show a large file — if curl error 23, run: termux-setup-storage , or: df -h ~)
+
+   tar -xOf "$HOME/origin.tar.gz" co > "$HOME/.local/bin/origin"
+   chmod +x "$HOME/.local/bin/origin"
    export PATH="$HOME/.local/bin:$PATH"
    origin --version
-
-   If --hard-link-copy is unknown, try:
-   tar --no-same-owner -xzf /tmp/origin.tar.gz -C ~/.local/share/cursor/origin/manual co
-   cp ~/.local/share/cursor/origin/manual/co ~/.local/bin/origin
 
    Normal install (PC/Linux desktop only):
    curl -fsSL https://downloads.cursor.com/origin/install.sh | sh
