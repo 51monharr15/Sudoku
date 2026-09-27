@@ -12,9 +12,10 @@
 
 | Term | Intended meaning in this doc |
 |------|------------------------------|
-| **Pane** | A major screen region the user can **cycle to** (like a tab or full-screen slice). |
-| **Window** | A view **inside** a pane (e.g. grid view is one window in pane 1). |
-*User question: Is pane vs window used in an understood way?* → **Answered Q0 (swipe).**
+| **Pane / window / tab** | Same idea — **separate screen slice** you swipe to (user may say any of these words). |
+| **Window (inside a pane)** | Optional: a view **inside** one pane (e.g. grid-only view on pane 1). |
+
+*Note: “secret pane” was speech-to-text for **separate**; slashes listed naming alternatives, not different features.*
 
 ---
 
@@ -24,10 +25,8 @@
 2. **Colour semantics:** Colours apply to **numbers, backgrounds, borders** with consistent meaning.
 3. **Space:** Screen space is scarce — no wasted chrome (see change 1).
 4. **Help:** User guide **from the UI**, opening at the **section relevant to current context**.
-5. **Pane 1:** Holds a **window of current grid state** only (no other windows in this pane yet).
----
-
-~~Secret pane~~ — **removed** (not a agreed requirement; drop unless you reintroduce it).
+5. **Pane 1:** Holds **current grid state** (main play pane).
+6. **Separate pane(s):** Swipe to other panes for **different** UI (e.g. technique list / CL) or **duplicate** controls if we agree that later — not hidden; just another swipe target.
 
 ---
 
