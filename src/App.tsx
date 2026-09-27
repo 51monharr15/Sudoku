@@ -1,157 +1,98 @@
 import { useCallback, useMemo, useState } from 'react'
 import './App.css'
-import { ChainPanel } from './components/ChainPanel'
+import { AppMenu } from './components/AppMenu'
+import { ClStepBar } from './components/ClStepBar'
 import { ImportModal } from './components/ImportModal'
 import { SudokuGrid, type CellHighlight } from './components/SudokuGrid'
+import { TechniqueIndex } from './components/TechniqueIndex'
+import { APP_VERSION } from './appVersion'
 import { computeCandidates } from './sudoku/candidates'
+import {
+  buildConsequenceList,
+  countTechniques,
+  stepHighlightCells,
+  toggleCandidateMask,
+} from './sudoku/consequenceList'
 import { cloneGrid, conflictingCells, maskHas } from './sudoku/grid'
 import { importPuzzle, SAMPLE_PUZZLE } from './sudoku/import'
-import { analyzeProposedMove } from './sudoku/implications'
-import { strongLinksForN } from './sudoku/strongLinks'
-import { APP_VERSION } from './appVersion'
-import type { Digit, Grid, ProposedMoveAnalysis } from './sudoku/types'
+import type { CandidateMask, ChainStep, Digit, Grid } from './sudoku/types'
 
-type InputMode = 'value' | 'propose'
+type EntryMode = 'solution' | 'pencil'
 
 function initialFromSample(): { values: Grid; givens: boolean[] } {
   const { values, givens } = importPuzzle(SAMPLE_PUZZLE)
   return { values, givens }
 }
 
+function syncCandidates(values: Grid, prev: CandidateMask[] | null): CandidateMask[] {
+  const auto = computeCandidates(values)
+  if (!prev) return auto
+  return auto.map((a, i) => {
+    if (values[i] !== 0) return 0
+    return prev[i] & a
+  })
+}
+
 export default function App() {
   const [initial] = useState(initialFromSample)
   const [values, setValues] = useState<Grid>(() => cloneGrid(initial.values))
   const [givens, setGivens] = useState<boolean[]>(() => [...initial.givens])
+  const [candidates, setCandidates] = useState<CandidateMask[]>(() =>
+    computeCandidates(initial.values),
+  )
   const [selectedCell, setSelectedCell] = useState<number | null>(null)
-  const [inputMode, setInputMode] = useState<InputMode>('value')
-  const [showCandidates, setShowCandidates] = useState(true)
+  const [selectedDigit, setSelectedDigit] = useState<Digit | null>(null)
+  const [entryMode, setEntryMode] = useState<EntryMode>('solution')
+  const [menuOpen, setMenuOpen] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
+  const [guideOpen, setGuideOpen] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
-  const [analysis, setAnalysis] = useState<ProposedMoveAnalysis | null>(null)
-  const [activeStepId, setActiveStepId] = useState<number | null>(null)
-  const [previewOn, setPreviewOn] = useState(false)
   const [conflictAt, setConflictAt] = useState<number | null>(null)
   const [conflictPeers, setConflictPeers] = useState<number[]>([])
 
-  const [selectedDigits, setSelectedDigits] = useState<Digit[]>([])
-  const [strongN, setStrongN] = useState<2 | 3 | 4>(2)
-  const [showStrongLinks, setShowStrongLinks] = useState(true)
-
-  const lastSelectedDigit = selectedDigits.length > 0 ? selectedDigits[selectedDigits.length - 1] : null
-
-  const candidates = useMemo(() => computeCandidates(values), [values])
-
-  const strongLinkCells = useMemo(() => {
-    if (!showStrongLinks) return new Set<number>()
-    const groups = strongLinksForN(candidates, strongN)
-    const cells = new Set<number>()
-    for (const g of groups) for (const c of g.cells) cells.add(c)
-    return cells
-  }, [candidates, strongN, showStrongLinks])
-
-  const digitColor = useMemo(() => {
-    const map = new Map<number, Digit>()
-    for (const d of selectedDigits) {
-      for (let cell = 0; cell < 81; cell++) {
-        const v = values[cell]
-        if (v === d || (v === 0 && maskHas(candidates[cell], d))) {
-          map.set(cell, d)
-        }
-      }
-    }
-    return map
-  }, [selectedDigits, values, candidates])
-
-  const highlights = useMemo(() => {
-    const map = new Map<number, CellHighlight>()
-
-    if (selectedDigits.length > 0) {
-      for (let cell = 0; cell < 81; cell++) {
-        if (digitColor.has(cell)) map.set(cell, 'digit-match')
-      }
-    }
-
-    if (!previewOn && showStrongLinks) {
-      for (const c of strongLinkCells) {
-        if (!map.has(c)) map.set(c, 'strong-link')
-      }
-    }
-
-    if (conflictAt !== null) {
-      map.set(conflictAt, 'conflict')
-      for (const p of conflictPeers) map.set(p, 'conflict-peer')
-    }
-
-    if (analysis && previewOn) {
-      for (const [cell, role] of analysis.highlights) {
-        map.set(cell, role as CellHighlight)
-      }
-    }
-
-    if (selectedCell !== null) {
-      const existing = map.get(selectedCell)
-      if (!existing || existing === 'digit-match') map.set(selectedCell, 'selected')
-    }
-
-    if (activeStepId !== null && analysis) {
-      const step = analysis.steps.find((s) => s.id === activeStepId)
-      if (step) {
-        map.set(step.cell, step.kind === 'proposed' ? 'proposed' : 'forced')
-        for (const c of step.relatedCells) {
-          if (!map.has(c)) map.set(c, 'related')
-        }
-      }
-    }
-    return map
-  }, [
-    analysis,
-    previewOn,
-    selectedCell,
-    activeStepId,
-    selectedDigits,
-    digitColor,
-    strongLinkCells,
-    showStrongLinks,
-    conflictAt,
-    conflictPeers,
-  ])
-
-  const activeChainCell = useMemo(() => {
-    if (activeStepId === null || !analysis) return null
-    return analysis.steps.find((s) => s.id === activeStepId)?.cell ?? null
-  }, [activeStepId, analysis])
-
-  const previewValues = previewOn && analysis?.valid ? analysis.resultValues : null
-
-  const runPreview = useCallback(
-    (cell: number, digit: Digit) => {
-      const result = analyzeProposedMove(values, cell, digit)
-      setAnalysis(result)
-      setPreviewOn(true)
-      setActiveStepId(result.steps[0]?.id ?? null)
-      setConflictAt(null)
-      setConflictPeers([])
-    },
-    [values],
+  const [clSteps, setClSteps] = useState<ChainStep[]>(() =>
+    buildConsequenceList(initial.values, computeCandidates(initial.values)),
   )
+  const [clStepIndex, setClStepIndex] = useState<number | null>(null)
+  const [pendingElims, setPendingElims] = useState<{ cell: number; digit: Digit }[]>([])
+  const [techEnabled, setTechEnabled] = useState<Record<string, boolean>>({})
 
-  const toggleDigit = useCallback((digit: Digit) => {
-    setSelectedDigits((prev) => {
-      const i = prev.indexOf(digit)
-      if (i >= 0) return [...prev.slice(0, i), ...prev.slice(i + 1)]
-      return [...prev, digit]
-    })
+  const rebuildCl = useCallback((v: Grid, c: CandidateMask[]) => {
+    const steps = buildConsequenceList(v, c)
+    setClSteps(steps)
+    setClStepIndex(null)
+    setPendingElims([])
   }, [])
 
-  const applyFill = useCallback(
+  const mceAfterState = useCallback(
+    (nextValues: Grid, nextCandidates: CandidateMask[]) => {
+      setValues(nextValues)
+      setCandidates(nextCandidates)
+      rebuildCl(nextValues, nextCandidates)
+    },
+    [rebuildCl],
+  )
+
+  const selectDigit = useCallback((digit: Digit) => {
+    setSelectedDigit((d) => (d === digit ? null : digit))
+  }, [])
+
+  const applySolutionMce = useCallback(
     (cell: number, digit: Digit) => {
+      if (givens[cell]) return
       const next = cloneGrid(values)
+      if (next[cell] === digit) {
+        next[cell] = 0
+        const nc = syncCandidates(next, candidates)
+        mceAfterState(next, nc)
+        setConflictAt(null)
+        setConflictPeers([])
+        return
+      }
       next[cell] = digit
-      setValues(next)
-      setAnalysis(null)
-      setPreviewOn(false)
-      setActiveStepId(null)
+      const nc = computeCandidates(next)
       const peers = conflictingCells(next, cell)
+      mceAfterState(next, nc)
       if (peers.length > 0) {
         setConflictAt(cell)
         setConflictPeers(peers)
@@ -160,105 +101,138 @@ export default function App() {
         setConflictPeers([])
       }
     },
-    [values],
+    [values, candidates, givens, mceAfterState],
+  )
+
+  const applyPencilMce = useCallback(
+    (cell: number, digit: Digit) => {
+      if (givens[cell] || values[cell] !== 0) return
+      const auto = computeCandidates(values)[cell]
+      const nc = candidates.slice()
+      nc[cell] = toggleCandidateMask(candidates[cell], digit, auto)
+      mceAfterState(values, nc)
+    },
+    [values, candidates, givens, mceAfterState],
   )
 
   const handleCell = useCallback(
     (cell: number) => {
       setSelectedCell(cell)
-      const digit = lastSelectedDigit
-      if (digit === null || givens[cell]) return
-
-      if (inputMode === 'propose') {
-        runPreview(cell, digit)
-        return
-      }
-
-      if (values[cell] !== 0 && givens[cell]) return
-      applyFill(cell, digit)
+      if (selectedDigit === null || givens[cell]) return
+      if (entryMode === 'solution') applySolutionMce(cell, selectedDigit)
+      else applyPencilMce(cell, selectedDigit)
     },
-    [lastSelectedDigit, givens, inputMode, runPreview, values, applyFill],
+    [selectedDigit, givens, entryMode, applySolutionMce, applyPencilMce],
   )
-
-  const clearCell = useCallback(() => {
-    if (selectedCell === null || givens[selectedCell]) return
-    setValues((prev) => {
-      const next = cloneGrid(prev)
-      next[selectedCell] = 0
-      return next
-    })
-    setConflictAt(null)
-    setConflictPeers([])
-    setAnalysis(null)
-    setPreviewOn(false)
-  }, [selectedCell, givens])
 
   const clearClash = useCallback(() => {
     if (conflictAt === null) return
-    setValues((prev) => {
-      const next = cloneGrid(prev)
-      for (const p of conflictPeers) {
-        if (!givens[p]) next[p] = 0
-      }
-      return next
-    })
+    const next = cloneGrid(values)
+    for (const p of conflictPeers) {
+      if (!givens[p]) next[p] = 0
+    }
+    const nc = computeCandidates(next)
     setConflictAt(null)
     setConflictPeers([])
-  }, [conflictAt, conflictPeers, givens])
-
-  const commitPreview = useCallback(() => {
-    if (!analysis?.valid) return
-    setValues(cloneGrid(analysis.resultValues))
-    setPreviewOn(false)
-    setAnalysis(null)
-    setActiveStepId(null)
-    setConflictAt(null)
-    setConflictPeers([])
-  }, [analysis])
-
-  const handleStepOffset = useCallback(
-    (delta: number) => {
-      if (!analysis?.steps.length) return
-      const steps = analysis.steps
-      const idx = steps.findIndex((s) => s.id === activeStepId)
-      const base = idx >= 0 ? idx : 0
-      const next = (base + delta + steps.length) % steps.length
-      setActiveStepId(steps[next].id)
-    },
-    [analysis, activeStepId],
-  )
+    mceAfterState(next, nc)
+  }, [conflictAt, conflictPeers, givens, values, mceAfterState])
 
   const handleImport = (text: string) => {
     try {
       const result = importPuzzle(text)
-      setValues(cloneGrid(result.values))
+      const v = cloneGrid(result.values)
+      const c = computeCandidates(v)
+      setValues(v)
       setGivens([...result.givens])
+      setCandidates(c)
       setImportError(null)
-      setAnalysis(null)
-      setPreviewOn(false)
       setSelectedCell(null)
-      setSelectedDigits([])
+      setSelectedDigit(null)
       setConflictAt(null)
       setConflictPeers([])
+      rebuildCl(v, c)
     } catch (e) {
       setImportError(e instanceof Error ? e.message : 'Import failed')
     }
   }
 
-  const conflictMsg =
-    conflictAt !== null
-      ? `Rule clash: same digit in row/column/box. Clear clash removes the other cell(s), keeps your last entry.`
-      : null
+  const activeStep = clStepIndex !== null ? clSteps[clStepIndex] : undefined
+
+  const highlights = useMemo(() => {
+    const map = new Map<number, CellHighlight>()
+    if (conflictAt !== null) {
+      map.set(conflictAt, 'conflict')
+      for (const p of conflictPeers) map.set(p, 'conflict-peer')
+    }
+    if (activeStep) {
+      for (const c of stepHighlightCells(activeStep)) map.set(c, 'cl-finding')
+    }
+    for (const { cell } of pendingElims) map.set(cell, 'cl-elim')
+    if (selectedCell !== null && !map.has(selectedCell)) map.set(selectedCell, 'selected')
+    return map
+  }, [conflictAt, conflictPeers, activeStep, pendingElims, selectedCell])
+
+  const valueMatchCells = useMemo(() => {
+    const set = new Set<number>()
+    if (selectedDigit === null) return set
+    for (let cell = 0; cell < 81; cell++) {
+      if (values[cell] === selectedDigit) set.add(cell)
+    }
+    return set
+  }, [selectedDigit, values])
+
+  const candSliceHighlight = useMemo(() => {
+    const map = new Map<number, Digit>()
+    if (selectedDigit === null) return map
+    for (let cell = 0; cell < 81; cell++) {
+      if (values[cell] === 0 && maskHas(candidates[cell], selectedDigit)) {
+        map.set(cell, selectedDigit)
+      }
+    }
+    return map
+  }, [selectedDigit, values, candidates])
+
+  const techCounts = useMemo(() => countTechniques(clSteps), [clSteps])
+
+  const showApply = pendingElims.length > 0
+
+  const applyPending = useCallback(() => {
+    if (pendingElims.length === 0) return
+    const nc = candidates.slice()
+    for (const { cell, digit } of pendingElims) {
+      if (values[cell] === 0) nc[cell] = nc[cell] & ~(1 << digit)
+    }
+    setPendingElims([])
+    mceAfterState(values, nc)
+  }, [pendingElims, candidates, values, mceAfterState])
+
+  const clForward = useCallback(() => {
+    if (clSteps.length === 0) return
+    setClStepIndex((i) => {
+      if (i === null) return 0
+      return Math.min(i + 1, clSteps.length - 1)
+    })
+  }, [clSteps.length])
+
+  const clBack = useCallback(() => {
+    setClStepIndex((i) => {
+      if (i === null || i <= 0) return null
+      return i - 1
+    })
+  }, [])
+
+  const applyNakedSingleFromStep = useCallback(() => {
+    if (!activeStep || activeStep.kind !== 'naked_single') return
+    applySolutionMce(activeStep.cell, activeStep.digit)
+  }, [activeStep, applySolutionMce])
 
   return (
     <div className="app">
-      <header className="top-bar">
-        <h1>Sudoku Studio</h1>
-        <div className="top-actions">
-          <button type="button" className="btn ghost small" onClick={() => setImportOpen(true)}>
-            Import
-          </button>
-        </div>
+      <header className="top-bar compact">
+        <button type="button" className="btn icon menu-btn" onClick={() => setMenuOpen(true)} aria-label="Menu">
+          ☰
+        </button>
+        <span className="swipe-hint">Swipe → techniques</span>
       </header>
 
       {importError && (
@@ -267,141 +241,106 @@ export default function App() {
         </p>
       )}
 
-      {conflictMsg && (
-        <div className="banner conflict" role="alert">
-          <p>{conflictMsg}</p>
+      {conflictAt !== null && (
+        <div className="banner conflict compact">
           <button type="button" className="btn ghost small" onClick={clearClash}>
             Clear clash
           </button>
         </div>
       )}
 
-      <SudokuGrid
-        values={values}
-        givens={givens}
-        candidates={previewOn && analysis ? analysis.resultCandidates : candidates}
-        showCandidates={showCandidates}
-        selectedCell={selectedCell}
-        highlights={highlights}
-        digitColor={digitColor}
-        filterDigits={selectedDigits}
-        previewDim={previewOn}
-        previewValues={previewValues}
-        activeChainCell={activeChainCell}
-        onSelectCell={handleCell}
-      />
-
-      <div className="mode-bar">
-        <button
-          type="button"
-          className={`btn toggle ${inputMode === 'value' ? 'on' : ''}`}
-          onClick={() => setInputMode('value')}
-        >
-          Fill
-        </button>
-        <button
-          type="button"
-          className={`btn toggle ${inputMode === 'propose' ? 'on' : ''}`}
-          onClick={() => setInputMode('propose')}
-        >
-          Propose
-        </button>
-        <button
-          type="button"
-          className={`btn toggle ${showCandidates ? 'on' : ''}`}
-          onClick={() => setShowCandidates((v) => !v)}
-        >
-          Candidates
-        </button>
-        <button
-          type="button"
-          className={`btn toggle ${showStrongLinks ? 'on' : ''}`}
-          onClick={() => setShowStrongLinks((v) => !v)}
-        >
-          Strong
-        </button>
+      <div className="swipe-viewport">
+        <div className="swipe-track">
+          <section className="swipe-panel" aria-label="Grid">
+            <SudokuGrid
+              values={values}
+              givens={givens}
+              candidates={candidates}
+              selectedCell={selectedCell}
+              selectedDigit={selectedDigit}
+              highlights={highlights}
+              valueMatchCells={valueMatchCells}
+              candSliceHighlight={candSliceHighlight}
+              onSelectCell={handleCell}
+            />
+            <ClStepBar
+              steps={clSteps}
+              stepIndex={clStepIndex}
+              onBack={clBack}
+              onForward={clForward}
+              showApply={showApply}
+              onApply={applyPending}
+            />
+            {activeStep?.kind === 'naked_single' && (
+              <button type="button" className="btn primary compact set-ns" onClick={applyNakedSingleFromStep}>
+                Set naked single
+              </button>
+            )}
+          </section>
+          <section className="swipe-panel" aria-label="Techniques">
+            <TechniqueIndex
+              counts={techCounts}
+              enabled={techEnabled}
+              onToggle={(key) => setTechEnabled((e) => ({ ...e, [key]: !e[key] }))}
+            />
+          </section>
+        </div>
       </div>
 
-      <div className="strong-bar" role="group" aria-label="Strong link size">
-        {([2, 3, 4] as const).map((n) => (
-          <button
-            key={n}
-            type="button"
-            className={`btn toggle small ${strongN === n ? 'on' : ''}`}
-            onClick={() => setStrongN(n)}
-          >
-            n={n}
-          </button>
-        ))}
-        {selectedDigits.length > 0 && (
-          <button type="button" className="btn ghost small" onClick={() => setSelectedDigits([])}>
-            Clear #
-          </button>
-        )}
-      </div>
-
-      <p className="hint-bar">
-        Fill = solve empty cells (Import for new puzzles). # then cell. Import for givens.
-      </p>
-
-      <div className="numpad" role="group" aria-label="Digits">
-        {([1, 2, 3, 4, 5, 6, 7, 8, 9] as const).map((n) => (
-          <button
-            key={n}
-            type="button"
-            className={`num ${selectedDigits.includes(n) ? 'picked' : ''} ${
-              lastSelectedDigit === n ? 'last-picked' : ''
-            }`}
-            onClick={() => toggleDigit(n)}
-          >
-            {n}
-          </button>
-        ))}
-        <button type="button" className="num wide" onClick={clearCell}>
-          Clear
-        </button>
-      </div>
-
-      {inputMode === 'propose' && (
-        <div className="propose-bar">
+      <div className="bottom-bar">
+        <div className="mode-toggle">
           <button
             type="button"
-            className="btn primary"
-            disabled={!analysis?.valid || !previewOn}
-            onClick={commitPreview}
+            className={`btn toggle compact ${entryMode === 'solution' ? 'on' : ''}`}
+            onClick={() => setEntryMode('solution')}
           >
-            Apply chain
+            #
           </button>
           <button
             type="button"
-            className="btn ghost"
-            disabled={!previewOn}
-            onClick={() => {
-              setPreviewOn(false)
-              setAnalysis(null)
-              setActiveStepId(null)
-            }}
+            className={`btn toggle compact ${entryMode === 'pencil' ? 'on' : ''}`}
+            onClick={() => setEntryMode('pencil')}
           >
-            Dismiss preview
+            ✎
           </button>
         </div>
-      )}
+        <div className="numpad compact" role="group" aria-label="Digits">
+          {([1, 2, 3, 4, 5, 6, 7, 8, 9] as const).map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={`num ${selectedDigit === n ? 'picked' : ''}`}
+              onClick={() => selectDigit(n)}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+        <footer className="app-footer">
+          <span className="app-version">{APP_VERSION}</span>
+        </footer>
+      </div>
 
-      <ChainPanel
-        steps={previewOn && analysis ? analysis.steps : []}
-        activeStepId={activeStepId}
-        onSelectStep={setActiveStepId}
-        onStepOffset={handleStepOffset}
-        error={analysis && !analysis.valid ? analysis.error : undefined}
+      <AppMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onImport={() => setImportOpen(true)}
+        onGuide={() => setGuideOpen(true)}
       />
-
       <ImportModal open={importOpen} onClose={() => setImportOpen(false)} onImport={handleImport} />
 
-      <footer className="app-footer">
-        <span className="app-version" title="Must match VERSION file on server">
-          {APP_VERSION}
-        </span>
-      </footer>
+      {guideOpen && (
+        <div className="menu-backdrop" onClick={() => setGuideOpen(false)}>
+          <div className="guide-panel" onClick={(e) => e.stopPropagation()}>
+            <h2>Getting started</h2>
+            <p>Pick <strong>#</strong> or <strong>✎</strong>, tap a digit, tap cells. ◀ ▶ walk consequences after each change.</p>
+            <p>See <code>documentation/HOW-TO-USE-APP.txt</code> in the repo.</p>
+            <button type="button" className="btn primary compact" onClick={() => setGuideOpen(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

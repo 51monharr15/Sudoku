@@ -1,6 +1,6 @@
 # UI / UX requirements (next version)
 
-**Status:** Draft — **not signed off**. No UI implementation until you approve this doc and open questions are answered.
+**Status:** **UX GO** — visual/engine prototype on `main` (2026.09.27.1). Refine after testing.
 
 **Previous shipped UI:** Rejected (Fill/Propose, Apply chain, scrolling layout, highlight scheme).
 
