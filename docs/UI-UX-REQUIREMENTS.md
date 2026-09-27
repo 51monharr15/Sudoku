@@ -146,7 +146,20 @@ Pad digit selected:
 | **Q5a** | Highlight value cells + candidate slices → **C** |
 | **Q5b** | Shade / highlight grammar → **draft for prototype** (see § Principles); amend after seeing UI. |
 | **Q6** | Top-right **☰**: Import, guide (context section), version → **Yes.** Same header row/column may hold **other compact controls** — use space wisely (TBD in prototype). |
-| **Q7** | **After each MCE:** CL rebuilds automatically; should UI **jump to step 1** of new CL immediately, or stay on current step until user taps **Analyse** / **Forward**? |
+| **Q7** | After MCE + CL rebuild → **user undecided.** *Held recommendation:* **J-R** below (old CL step index never reused). |
+
+### Q7 — CL after MCE (analysis)
+
+**Inconsistency:** Yes — old CL steps describe **old** candidate/solution state. After an MCE (or **Apply** eliminations), that CL is **invalid**; only the **new** CL matches the grid.
+
+| Option | Behaviour | Pros | Cons |
+|--------|-----------|------|------|
+| **J-A** | Auto show **step 1** of new CL | Immediate feedback | May surprise if user wasn’t done reviewing |
+| **J-B** | Keep old highlight until **Forward** | — | **Stale/wrong** highlights (reject) |
+| **J-C** | Auto step 1 only if old CL finished | Middle ground | Hard to define “finished” |
+| **J-R** *(recommended)* | Rebuild CL; **clear step** (no CL highlight) until user taps **Forward**; optional one-line “N steps found” | Grid always truthful; user enters chain deliberately | One extra tap |
+
+**Suggest:** **J-R** for prototype. **J-A** if you want zero extra tap after each MCE.
 
 ---
 
