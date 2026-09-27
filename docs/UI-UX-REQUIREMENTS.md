@@ -139,14 +139,14 @@ Pad digit selected:
 |----|----------|
 | **Q0** | **Pane vs window:** Is the table above what you mean? Should “cycle panes” be bottom tabs, swipe, or menu? → **Answer: B — swipe left/right** |
 | **Q1** | **4.1:** Highlight technique types — **step through**, **toggles**, or **both**? → **Answer: C — both** |
-| **Q2** | CL layout separate vs strip → **user undecided; spec holds:** fwd/back + step on **grid window**; technique index optional swipe window. |
+| **Q2** | CL layout → **Recommendation Q2-R** (§ below); confirm or edit before build. |
 | **Q3** | **Apply all:** Show only when there are pending updates to apply (hide when it would do nothing). → **Answer: B** |
 | **Q4** | Candidates + MCE + CL + Apply → **Answered:** see §4b (auto baseline; MCE only edits; CL highlights; Apply for eliminations). |
 | **Q5** | Digit selected → highlight grid; tap many cells (set/toggle) until digit deselected or another digit chosen → **Answered:** §5b. |
 | **Q5a** | Highlight value cells + candidate slices → **C** |
-| **Q5b** | Shade / highlight grammar → **draft for prototype** (see § Principles); amend after seeing UI. |
+| **Q5b** | Visual grammar → **Recommendation Q5b-R** (§ below); tune in prototype. |
 | **Q6** | Top-right **☰**: Import, guide (context section), version → **Yes.** Same header row/column may hold **other compact controls** — use space wisely (TBD in prototype). |
-| **Q7** | After MCE + CL rebuild → **user undecided.** *Held recommendation:* **J-R** below (old CL step index never reused). |
+| **Q7** | After MCE + CL rebuild → **Answer: J-R** — clear CL step until **Forward**; optional “N steps found”. |
 
 ### Q7 — CL after MCE (analysis)
 
@@ -159,7 +159,47 @@ Pad digit selected:
 | **J-C** | Auto step 1 only if old CL finished | Middle ground | Hard to define “finished” |
 | **J-R** *(recommended)* | Rebuild CL; **clear step** (no CL highlight) until user taps **Forward**; optional one-line “N steps found” | Grid always truthful; user enters chain deliberately | One extra tap |
 
-**Suggest:** **J-R** for prototype. **J-A** if you want zero extra tap after each MCE.
+**Chosen:** **J-R** (Q7).
+
+---
+
+## Q2-R — CL layout (recommendation)
+
+**Problem:** CL text list + grid + numpad must fit **without scroll**; fwd/back belongs with the grid (Q7 J-R).
+
+| Option | Layout | Verdict |
+|--------|--------|---------|
+| **2-A** | CL list strip under grid on same window | Eats vertical space; fights numpad |
+| **2-B** | Separate full pane only for CL | Swipe away from grid while stepping — awkward |
+| **2-C** | **Two swipe windows** in play area | **Recommend** |
+
+**Q2-R (use for prototype):**
+
+- **Fixed thin top row:** ☰ + optional icons (same row, use wisely).
+- **Fixed bottom:** vn + compact numpad + pencil/solution toggle.
+- **Middle (swipe left/right):**
+  - **Window A (default):** Grid + one line **`[◀] Hidden single · 3/12 [▶]`** + **Apply** when pending + faint **`12 steps`** (tap = nothing or opens Window B — optional).
+  - **Window B:** **Technique index** — each technique, **count**, **toggle** show on grid, **step** through occurrences (Q1 both). No grid on B (grid stays on A when you swipe back).
+
+CL **highlights always draw on grid in Window A**; Window B is control surface only.
+
+---
+
+## Q5b-R — Visual grammar (recommendation)
+
+**Goals:** Read candidates by **position**; no nine hue families; readable at a glance; amend after prototype.
+
+| Layer | Rule |
+|-------|------|
+| **Given** | Bold light digit; **no** count shade |
+| **User solution** | Agreed “user” colour (e.g. blue); **no** count shade |
+| **Candidate cell** | Always show **9 fixed slots**; digit in slot = still candidate |
+| **Count shade** | Same hue (neutral grey); **4 luminance steps** for 1 / 2 / 3 / 4 candidates in cell (singleton → quad) |
+| **Pad digit selected** | **Value match:** accent **ring** on whole cell. **Candidate match:** accent **fill ~35%** on **that slot only** (not nine colours) |
+| **CL step active** | **Amber outline** on cells in current finding; **dashed outline** on elimination targets |
+| **Rule clash** | **Red outline** on conflicting cells (MCE example pattern) |
+
+Reject: nine text colours; yellow/green digit families. Prototype may adjust grey steps and accent hex only.
 
 ---
 
