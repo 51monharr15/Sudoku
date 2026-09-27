@@ -1,0 +1,47 @@
+WHY "PASSWORD" FAILS ON TERMUX
+==============================
+
+Git asks for Username + Password. For Origin:
+
+  • NOT your Cursor website login password
+  • NOT your GitHub password
+  • NOT an FTP password
+  • Often NOT a random "API key" pasted by hand (wrong type / expired / wrong account)
+
+Origin expects a short-lived token via the Origin CLI credential helper.
+
+
+VERIFY AUTH (after setup)
+-------------------------
+  origin auth status
+
+Shows whether git credentials for origin.cursor.com are valid.
+
+
+RECOMMENDED ON TERMUX
+---------------------
+  curl -fsSL https://downloads.cursor.com/origin/install.sh | sh
+  origin auth login
+
+Sign in in the browser when it opens. Then:
+
+  origin auth status
+  git clone https://origin.cursor.com/git/51mon/Sudoku.git Sudoku
+
+Or:
+
+  origin repo clone 51mon/Sudoku
+
+
+IF YOU MUST TYPE USERNAME/PASSWORD MANUALLY
+-------------------------------------------
+Only works with the correct token type from Origin (see cursor.com/docs/origin/git).
+Username 51mon alone is not enough if the password is not a valid Origin git token.
+
+Docs: https://cursor.com/docs/origin/git
+
+
+NO GIT ON PHONE (always works)
+------------------------------
+Codebase → Sudoku → Settings → Advanced → Download (zip).
+Unzip → ~/Sudoku → npm install → npm run dev

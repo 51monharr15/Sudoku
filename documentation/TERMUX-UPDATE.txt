@@ -14,7 +14,8 @@ ONE-TIME (replace with a real clone)
   cd Sudoku
   npm install
 
-If clone asks for password: use a Cursor/Origin personal access token (not your normal password).
+Do NOT type your Cursor website password. See CURSOR-GIT-LOGIN.txt.
+Prefer:  origin auth login   then clone (see that file).
 
 
 EVERY UPDATE AFTER THAT
