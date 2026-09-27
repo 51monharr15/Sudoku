@@ -101,7 +101,7 @@ On each MCE, assess grid for:
 
 | ID | Question |
 |----|----------|
-| **Q0** | **Pane vs window:** Is the table above what you mean? Should “cycle panes” be bottom tabs, swipe, or menu? |
+| **Q0** | **Pane vs window:** Is the table above what you mean? Should “cycle panes” be bottom tabs, swipe, or menu? → **Answer: B — swipe left/right** |
 | **Q1** | **4.1:** Highlight technique types — **step through**, **toggles**, or **both**? |
 | **Q2** | **Secret pane:** How opened (long-press, menu, gesture)? What goes there vs main pane? |
 | **Q3** | **CL pane:** Separate pane from grid, or strip under grid within pane 1? |
