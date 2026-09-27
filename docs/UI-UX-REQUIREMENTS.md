@@ -82,8 +82,13 @@ Region = row | column | 3×3 box.
 ### 5. Compact numpad
 
 - **Mode toggle:** **solution #** vs **candidate / pencil**.
-- **Highlight digits** stay on until turned off; **last selected** = current digit for grid updates.
-- **Cell tap:** toggles **set #** or **candidate** → triggers **MCE**.
+- **Digit selected (1–9):** stays selected until user clears it or picks another digit; **highlights** matching cells on the grid (see **Q5a**).
+- **While digit selected:** each **cell tap** set/toggles **solution** or **candidate** (per mode) → **MCE**; user may tap **many cells** in sequence without re-tapping the digit.
+- **Last selected digit** = active for those taps.
+
+### 5b. Digit highlight (Q5 — open sub-question **Q5a**)
+
+When a pad digit is selected, highlight cells where that digit is: **(Q5a — confirm)** placed value only / candidate only / both?
 - **Colour (constant semantics):**
   - **Set #** → highlight **whole cell**.
   - **Candidate** → highlight **that digit’s 1/9 slice** of the cell.
@@ -122,7 +127,7 @@ Region = row | column | 3×3 box.
 | **Q2** | CL layout separate vs strip → **user undecided; spec holds:** fwd/back + step on **grid window**; technique index optional swipe window. |
 | **Q3** | **Apply all:** Show only when there are pending updates to apply (hide when it would do nothing). → **Answer: B** |
 | **Q4** | Candidates + MCE + CL + Apply → **Answered:** see §4b (auto baseline; MCE only edits; CL highlights; Apply for eliminations). |
-| **Q5** | **Multi-cell tap:** After picking digit, one cell per tap only, or drag/select multiple? |
+| **Q5** | Digit selected → highlight grid; tap many cells (set/toggle) until digit deselected or another digit chosen → **Answered:** see §5b. |
 | **Q6** | **Menu:** Hamburger top-right OK for Import, guide, version? |
 | **Q7** | **MCE + CL:** Auto-open CL on every MCE, or only when user taps “Analyse”? |
 
