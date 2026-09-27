@@ -1,0 +1,51 @@
+TERMUX — FULL STEPS (Origin git, same repo as Codebase)
+======================================================
+
+Repo (only place it lives):
+  https://origin.cursor.com/git/51mon/Sudoku.git
+
+Your Cursor email + password work in the BROWSER step below.
+Do not paste that password into "Password for origin.cursor.com" when git asks.
+
+
+PART A — ONE-TIME SETUP
+-----------------------
+1. pkg update && pkg install git curl nodejs-lts -y
+
+2. Install Origin CLI:
+   curl -fsSL https://downloads.cursor.com/origin/install.sh | sh
+
+3. Close and reopen Termux (or: source ~/.bashrc)
+
+4. Log in (opens browser — use your Cursor email + password):
+   origin auth login
+
+5. Check it worked:
+   origin auth status
+
+6. Clone (should NOT ask for username/password now):
+   cd ~
+   rm -rf Sudoku
+   git clone https://origin.cursor.com/git/51mon/Sudoku.git Sudoku
+
+7. App:
+   cd ~/Sudoku
+   npm install
+   npm run dev -- --host
+
+
+PART B — EVERY UPDATE LATER
+---------------------------
+   cd ~/Sudoku
+   git pull origin main
+   npm install
+   npm run dev -- --host
+
+Version at bottom of app should match file VERSION in repo.
+
+
+IF STEP 4 OR 6 FAILS
+--------------------
+Use Codebase → Sudoku → Settings → Advanced → Download.
+Unzip to ~/Sudoku → npm install → npm run dev -- --host
+(Same code; no git on phone.)
