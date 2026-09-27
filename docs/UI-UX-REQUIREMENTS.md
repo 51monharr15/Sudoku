@@ -10,12 +10,12 @@
 
 ## Terminology (confirm with user)
 
-| Term | Intended meaning in this doc |
-|------|------------------------------|
-| **Pane / window / tab** | Same idea — **separate screen slice** you swipe to (user may say any of these words). |
-| **Window (inside a pane)** | Optional: a view **inside** one pane (e.g. grid-only view on pane 1). |
+| Term | Meaning |
+|------|---------|
+| **Pane** | Fixed **area of the screen**. |
+| **Window** | The **info set shown** in a pane **right now**. **Swipe left/right** changes window. |
 
-*Note: “secret pane” was speech-to-text for **separate**; slashes listed naming alternatives, not different features.*
+*“Secret” = speech-to-text for **separate** (another pane), not hidden.*
 
 ---
 
