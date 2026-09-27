@@ -45,7 +45,7 @@
 ### 1. Header / menu
 
 - Remove wasted space: **“Sudoku Studio”**, **version #**, **Import** from the main grid pane.
-- **Version** and **Getting started / user guide** live on a **menu** (guide opens at contextual section).
+- **Version**, **Import**, **Getting started / user guide** (context section) on top-right **☰**; room on that **row/column** for other compact actions — assign in prototype.
 
 ### 2. Sudoku operations — number first
 
