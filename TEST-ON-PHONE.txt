@@ -9,6 +9,10 @@ Once (Termux):
 Each refresh (after Codebase → Download → save .tar.gz):
   bash ~/storage/shared/Sudoku-Studio/scripts/android-refresh.sh PATH/TO/download.tar.gz
 
+First time (no Sudoku-Studio yet) — run from the folder you unpacked, or:
+  bash scripts/android-refresh.sh PATH/TO/download.tar.gz
+  (script lives inside the tarball you just downloaded)
+
 Dev (live UI while you tap):
   bash ~/storage/shared/Sudoku-Studio/scripts/android-dev.sh
   Chrome → http://127.0.0.1:5173/
