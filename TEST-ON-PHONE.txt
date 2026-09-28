@@ -1,0 +1,24 @@
+SUDOKU ON ANDROID — TEST LOOP
+=============================
+
+Once (Termux):
+  termux-setup-storage
+  mkdir -p ~/storage/shared
+  echo 'SUDOKU_ROOT=$HOME/storage/shared/Sudoku-Studio' > ~/storage/shared/sudoku-test.env
+
+Each refresh (after Codebase → Download → save .tar.gz):
+  bash ~/storage/shared/Sudoku-Studio/scripts/android-refresh.sh PATH/TO/download.tar.gz
+
+Dev (live UI while you tap):
+  bash ~/storage/shared/Sudoku-Studio/scripts/android-dev.sh
+  Chrome → http://127.0.0.1:5173/
+
+Staged (built site, like FTP upload):
+  bash ~/storage/shared/Sudoku-Studio/scripts/android-staged.sh
+  Chrome → http://127.0.0.1:4173/
+
+Feedback → Cursor agent → download again → refresh script.
+
+No git. No Ubuntu. No Origin CLI on Termux.
+
+Change install folder: edit ~/storage/shared/sudoku-test.env (use a path under Obsidian if you want).
