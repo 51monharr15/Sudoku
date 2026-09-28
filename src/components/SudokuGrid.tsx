@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { colOf, rowOf, maskDigits } from '../sudoku/grid'
 import { cellCandidateCount } from '../sudoku/consequenceList'
 import type { CandidateMask, CellValue, Digit, Grid } from '../sudoku/types'
@@ -14,12 +15,10 @@ interface SudokuGridProps {
   givens: boolean[]
   candidates: CandidateMask[]
   selectedCell: number | null
-  selectedDigit: Digit | null
+  selectedDigits: Digit[]
   highlights: Map<number, CellHighlight>
-  /** Whole-cell ring when pad digit matches value */
+  /** Whole-cell ring when any selected pad digit matches the cell value */
   valueMatchCells: Set<number>
-  /** cell -> digit for candidate slice highlight */
-  candSliceHighlight: Map<number, Digit>
   onSelectCell: (cell: number) => void
 }
 
@@ -48,12 +47,13 @@ export function SudokuGrid({
   givens,
   candidates,
   selectedCell,
-  selectedDigit,
+  selectedDigits,
   highlights,
   valueMatchCells,
-  candSliceHighlight,
   onSelectCell,
 }: SudokuGridProps) {
+  const selectedSet = useMemo(() => new Set(selectedDigits), [selectedDigits])
+
   return (
     <div className="grid-wrap" role="grid" aria-label="Sudoku board">
       {values.map((value, cell) => {
@@ -61,7 +61,6 @@ export function SudokuGrid({
         const displayValue = value as CellValue
         const cands = displayValue === 0 ? maskDigits(candidates[cell]) : []
         const candCount = displayValue === 0 ? cellCandidateCount(candidates, cell) : 0
-        const sliceDigit = candSliceHighlight.get(cell)
 
         return (
           <button
@@ -79,13 +78,19 @@ export function SudokuGrid({
             onClick={() => onSelectCell(cell)}
           >
             {displayValue !== 0 ? (
-              <span className={`digit ${isGiven ? 'given' : 'user'}`}>{displayValue}</span>
+              <span
+                className={`digit ${isGiven ? 'given' : 'user'} ${
+                  selectedSet.has(displayValue) ? 'digit-pad-match' : ''
+                }`}
+              >
+                {displayValue}
+              </span>
             ) : (
               <span className="candidates">
                 {Array.from({ length: 9 }, (_, i) => {
                   const d = (i + 1) as Digit
                   const on = cands.includes(d)
-                  const slice = selectedDigit !== null && sliceDigit === d && on
+                  const slice = on && selectedSet.has(d)
                   return (
                     <span key={d} className={`cand ${on ? 'on' : 'off'} ${slice ? 'slice-hl' : ''}`}>
                       {on ? d : ''}

@@ -13,7 +13,7 @@ import {
   stepHighlightCells,
   toggleCandidateMask,
 } from './sudoku/consequenceList'
-import { cloneGrid, conflictingCells, maskHas } from './sudoku/grid'
+import { cloneGrid, conflictingCells } from './sudoku/grid'
 import { importPuzzle, SAMPLE_PUZZLE } from './sudoku/import'
 import type { CandidateMask, ChainStep, Digit, Grid } from './sudoku/types'
 
@@ -41,7 +41,7 @@ export default function App() {
     computeCandidates(initial.values),
   )
   const [selectedCell, setSelectedCell] = useState<number | null>(null)
-  const [selectedDigit, setSelectedDigit] = useState<Digit | null>(null)
+  const [selectedDigits, setSelectedDigits] = useState<Digit[]>([])
   const [entryMode, setEntryMode] = useState<EntryMode>('solution')
   const [menuOpen, setMenuOpen] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
@@ -73,9 +73,18 @@ export default function App() {
     [rebuildCl],
   )
 
+  const activeDigit = selectedDigits.length > 0 ? selectedDigits[selectedDigits.length - 1] : null
+
+  /** Digits stay selected until ⌫#; re-tap moves digit to end (active for cell taps). */
   const selectDigit = useCallback((digit: Digit) => {
-    setSelectedDigit((d) => (d === digit ? null : digit))
+    setSelectedDigits((prev) => {
+      const i = prev.indexOf(digit)
+      if (i >= 0) return [...prev.slice(0, i), ...prev.slice(i + 1), digit]
+      return [...prev, digit]
+    })
   }, [])
+
+  const clearSelectedDigits = useCallback(() => setSelectedDigits([]), [])
 
   const applySolutionMce = useCallback(
     (cell: number, digit: Digit) => {
@@ -118,11 +127,11 @@ export default function App() {
   const handleCell = useCallback(
     (cell: number) => {
       setSelectedCell(cell)
-      if (selectedDigit === null || givens[cell]) return
-      if (entryMode === 'solution') applySolutionMce(cell, selectedDigit)
-      else applyPencilMce(cell, selectedDigit)
+      if (activeDigit === null || givens[cell]) return
+      if (entryMode === 'solution') applySolutionMce(cell, activeDigit)
+      else applyPencilMce(cell, activeDigit)
     },
-    [selectedDigit, givens, entryMode, applySolutionMce, applyPencilMce],
+    [activeDigit, givens, entryMode, applySolutionMce, applyPencilMce],
   )
 
   const clearClash = useCallback(() => {
@@ -147,7 +156,7 @@ export default function App() {
       setCandidates(c)
       setImportError(null)
       setSelectedCell(null)
-      setSelectedDigit(null)
+      setSelectedDigits([])
       setConflictAt(null)
       setConflictPeers([])
       rebuildCl(v, c)
@@ -174,23 +183,13 @@ export default function App() {
 
   const valueMatchCells = useMemo(() => {
     const set = new Set<number>()
-    if (selectedDigit === null) return set
+    if (selectedDigits.length === 0) return set
     for (let cell = 0; cell < 81; cell++) {
-      if (values[cell] === selectedDigit) set.add(cell)
+      const v = values[cell]
+      if (v !== 0 && selectedDigits.includes(v)) set.add(cell)
     }
     return set
-  }, [selectedDigit, values])
-
-  const candSliceHighlight = useMemo(() => {
-    const map = new Map<number, Digit>()
-    if (selectedDigit === null) return map
-    for (let cell = 0; cell < 81; cell++) {
-      if (values[cell] === 0 && maskHas(candidates[cell], selectedDigit)) {
-        map.set(cell, selectedDigit)
-      }
-    }
-    return map
-  }, [selectedDigit, values, candidates])
+  }, [selectedDigits, values])
 
   const techCounts = useMemo(() => countTechniques(clSteps), [clSteps])
 
@@ -257,10 +256,9 @@ export default function App() {
               givens={givens}
               candidates={candidates}
               selectedCell={selectedCell}
-              selectedDigit={selectedDigit}
+              selectedDigits={selectedDigits}
               highlights={highlights}
               valueMatchCells={valueMatchCells}
-              candSliceHighlight={candSliceHighlight}
               onSelectCell={handleCell}
             />
             <ClStepBar
@@ -309,12 +307,17 @@ export default function App() {
             <button
               key={n}
               type="button"
-              className={`num ${selectedDigit === n ? 'picked' : ''}`}
+              className={`num ${selectedDigits.includes(n) ? 'picked' : ''} ${
+                activeDigit === n ? 'last-picked' : ''
+              }`}
               onClick={() => selectDigit(n)}
             >
               {n}
             </button>
           ))}
+          <button type="button" className="num clear-digits" onClick={clearSelectedDigits} aria-label="Clear selected digits">
+            ⌫#
+          </button>
         </div>
         <footer className="app-footer">
           <span className="app-version">{APP_VERSION}</span>
@@ -333,7 +336,10 @@ export default function App() {
         <div className="menu-backdrop" onClick={() => setGuideOpen(false)}>
           <div className="guide-panel" onClick={(e) => e.stopPropagation()}>
             <h2>Getting started</h2>
-            <p>Pick <strong>#</strong> or <strong>✎</strong>, tap a digit, tap cells. ◀ ▶ walk consequences after each change.</p>
+            <p>
+              Pick <strong>#</strong> or <strong>✎</strong>, tap digit(s) on the pad (they stay selected), tap cells.
+              Last digit tapped is active. <strong>⌫#</strong> clears digits. ◀ ▶ walk consequences after each change.
+            </p>
             <p>See <code>documentation/HOW-TO-USE-APP.txt</code> in the repo.</p>
             <button type="button" className="btn primary compact" onClick={() => setGuideOpen(false)}>
               Close
