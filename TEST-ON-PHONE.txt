@@ -1,28 +1,66 @@
-SUDOKU ON ANDROID — TEST LOOP
-=============================
+SUDOKU — YOUR PHONE TEST LOOP
+==============================
 
-Once (Termux):
-  termux-setup-storage
-  mkdir -p ~/storage/shared
-  echo 'SUDOKU_ROOT=$HOME/storage/shared/Sudoku-Studio' > ~/storage/shared/sudoku-test.env
+Project folder (you already use this):
+  ~/storage/shared/!simon/obsidian/development/Sudoku
 
-Each refresh (after Codebase → Download → save .tar.gz):
-  bash ~/storage/shared/Sudoku-Studio/scripts/android-refresh.sh PATH/TO/download.tar.gz
+Same in full path:
+  /data/data/com.termux/files/home/storage/shared/!simon/obsidian/development/Sudoku
 
-First time (no Sudoku-Studio yet) — run from the folder you unpacked, or:
-  bash scripts/android-refresh.sh PATH/TO/download.tar.gz
-  (script lives inside the tarball you just downloaded)
 
-Dev (live UI while you tap):
-  bash ~/storage/shared/Sudoku-Studio/scripts/android-dev.sh
-  Chrome → http://127.0.0.1:5173/
+WHY NOT CUSTOM BASH SCRIPTS
+---------------------------
+Refresh = normal tools only: Codebase download, tar (if needed), npm, git.
+No android-refresh helpers — use the commands below so you learn them.
 
-Staged (built site, like FTP upload):
-  bash ~/storage/shared/Sudoku-Studio/scripts/android-staged.sh
-  Chrome → http://127.0.0.1:4173/
 
-Feedback → Cursor agent → download again → refresh script.
+TWO WAYS TO REFRESH (pick one)
+------------------------------
 
-No git. No Ubuntu. No Origin CLI on Termux.
+A) CODEBASE DOWNLOAD (what you do now)
+   Codebase puts a snapshot on the phone. It usually has NO .git folder.
+   So you cannot git pull until you switch to (B).
 
-Change install folder: edit ~/storage/shared/sudoku-test.env (use a path under Obsidian if you want).
+   After download lands in Sudoku (or you extract a .tar.gz into development/):
+     cd ~/storage/shared/!simon/obsidian/development/Sudoku
+     npm install
+     npm run dev -- --host
+   Chrome: http://127.0.0.1:5173/
+
+   Staged (built site, like upload):
+     npm run build
+     npm run preview -- --host
+   Chrome: http://127.0.0.1:4173/
+
+
+B) GIT (one folder, one command updates)
+   Why git: git pull origin main is the standard refresh; you see history and diffs.
+   Why it was painful: Origin login needs the Origin CLI, which does NOT run in
+   plain Termux (only inside Ubuntu proot). That is a platform limit, not you.
+
+   One-time (when you choose git — same parent folder):
+     cd ~/storage/shared/!simon/obsidian/development
+     mv Sudoku Sudoku-download-backup
+     git clone https://origin.cursor.com/git/51mon/Sudoku.git Sudoku
+     cd Sudoku && npm install
+
+   If clone asks for password: see documentation/GIT-AUTH-TERMUX.txt (one auth path only).
+
+   Every update after clone works:
+     cd ~/storage/shared/!simon/obsidian/development/Sudoku
+     git pull origin main
+     npm install
+     npm run dev -- --host
+
+
+RUNTIME → FEEDBACK → AGENT CHANGES → REFRESH
+---------------------------------------------
+You test in dev (5173) or staged (4173). Tell the agent. Refresh with (A) or (B).
+Footer version = file VERSION in the project.
+
+
+termux-setup-storage (once per phone)
+-------------------------------------
+Why: Termux’s own home is private; ~/storage/shared/... is the same files as
+Android “Files” / Obsidian. Without it, the Obsidian path may not exist in Termux.
+That is smoothing the future, not extra entropy.

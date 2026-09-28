@@ -1,28 +1,25 @@
 # Agent brief — Simon / Sudoku on Android
 
-## User goal
+## Hold this path
 
-**Runtime → feedback → agent changes → refresh → feedback.** No lectures about git, Origin, or proot unless the user explicitly asks.
+**Project directory (only):**
+`~/storage/shared/!simon/obsidian/development/Sudoku`
 
-## Phone test loop (only supported path)
+User refreshes by either:
+1. **Codebase download** into that folder (no `.git` — not `git pull`), then `npm install` + `npm run dev -- --host`, or
+2. **Git clone once** into that path, then **`git pull origin main`** for updates after one-time Origin auth (`documentation/GIT-AUTH-TERMUX.txt`).
 
-1. User downloads repo tarball from **Codebase → Settings → Advanced → Download**.
-2. User runs `scripts/android-refresh.sh` → installs to **`~/storage/shared/Sudoku-Studio`** (Android-visible storage; configurable via `~/storage/shared/sudoku-test.env`).
-3. **Dev:** `scripts/android-dev.sh` → `http://127.0.0.1:5173/`
-4. **Staged:** `scripts/android-staged.sh` → `http://127.0.0.1:4173/` (production build)
+Do **not** introduce new roots, env files, or bash refresh scripts.
+Do **not** default to Origin CLI in plain Termux or open new setup rabbit holes.
 
-See **`TEST-ON-PHONE.txt`** (short).
+## Loop
 
-## Do not
+Runtime (5173 dev or 4173 preview) → user feedback → agent changes on Origin repo → user refresh (download or pull) → repeat.
 
-- Push Termux **Origin CLI**, **proot**, or **git pull** as the default update path.
-- Multi-step auth journeys unless user requests git.
-- Long docs when `TEST-ON-PHONE.txt` suffices.
+## UI
 
-## UI work
+`docs/UI-UX-REQUIREMENTS.md`. Prototype = build for review, iterate on feedback.
 
-Spec: `docs/UI-UX-REQUIREMENTS.md`. “Prototype” = implement for **visual review**, iterate on feedback (especially Q5b highlights).
+## Repo URL
 
-## Repo
-
-Origin: `https://origin.cursor.com/git/51mon/Sudoku.git` (user may only use Codebase download on phone).
+`https://origin.cursor.com/git/51mon/Sudoku.git`
