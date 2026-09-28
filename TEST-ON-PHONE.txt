@@ -59,8 +59,5 @@ You test in dev (5173) or staged (4173). Tell the agent. Refresh with (A) or (B)
 Footer version = file VERSION in the project.
 
 
-termux-setup-storage (once per phone)
--------------------------------------
-Why: Termux’s own home is private; ~/storage/shared/... is the same files as
-Android “Files” / Obsidian. Without it, the Obsidian path may not exist in Termux.
-That is smoothing the future, not extra entropy.
+If pwd is already under ~/storage/shared/!simon/obsidian/... skip storage setup.
+You only need termux-setup-storage if that path does not exist in Termux yet.

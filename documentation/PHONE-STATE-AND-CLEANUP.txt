@@ -1,0 +1,51 @@
+WHAT GOT INSTALLED ON THE PHONE (inventory)
+===========================================
+
+If you followed the earlier Termux / git / Origin steps, you may have:
+
+
+1) YOUR REAL PROJECT (keep)
+   ~/storage/shared/!simon/obsidian/development/Sudoku
+   This is Obsidian + Android Files + Termux. No "run once" needed if pwd already works here.
+
+
+2) ORIGIN CLI in Termux home (optional delete — does not run in plain Termux)
+   ~/.local/bin/origin          (~98 MB)
+   ~/origin.tar.gz              (~37 MB)
+   Why it was added: Origin docs say "origin auth login" before git pull.
+   Why it fails in Termux: Android blocks that Linux binary (e_type 2). Not a typo in your pwd.
+
+
+3) Ubuntu via proot-distro (optional delete — only for Origin login inside Linux)
+   Location: Termux private storage, roughly:
+     $PREFIX/var/lib/proot-distro/installed-rootfs/ubuntu
+   (Often 1–3+ GB.)
+   Why it was added: Origin CLI runs inside Ubuntu, not in Termux.
+   If you will use Windows 10 for git/Origin instead: remove Ubuntu and skip phone git auth.
+
+   Check:
+     proot-distro list
+
+   Remove (frees space):
+     proot-distro remove ubuntu
+
+   Origin inside Ubuntu (if you installed it there):
+     only under proot, e.g. /root/.local/bin/origin — gone when Ubuntu rootfs is removed.
+
+
+4) Old download folder (optional delete if unused)
+   ~/51mon-Sudoku-559bd1b
+
+
+5) Node/npm in Termux (keep if you run npm run dev on phone)
+   pkg install nodejs-lts
+
+
+WHAT TO USE THE PHONE FOR (simple)
+==================================
+  cd ~/storage/shared/!simon/obsidian/development/Sudoku
+  npm install          # after Codebase download or after copying files from PC
+  npm run dev -- --host
+  Chrome → http://127.0.0.1:5173/
+
+No Ubuntu. No origin in Termux. No extra mkdir if your Obsidian path already works.

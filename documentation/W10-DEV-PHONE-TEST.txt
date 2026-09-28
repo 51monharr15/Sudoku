@@ -1,0 +1,64 @@
+WINDOWS 10 + PHONE — ONE STORY
+================================
+
+Roles
+-----
+  PC (W10):  git, Origin login, edit/build, push to Origin. Normal developer tools.
+  Phone:     run the app locally for UX feedback (npm dev server). Refresh files from
+             Codebase download OR copy from PC — not Termux Origin CLI.
+
+
+PART 1 — PC ONE-TIME SETUP
+--------------------------
+1. Install Node LTS from https://nodejs.org (includes npm).
+
+2. Install Origin CLI (works on W10; unlike Termux):
+     In PowerShell:
+       curl.exe -fsSL https://downloads.cursor.com/origin/install.sh | sh
+     Or use Git Bash / WSL if install.sh needs bash.
+     Add %USERPROFILE%\.local\bin to PATH if "origin" not found.
+
+3. Sign in (browser on PC — no cut/paste circus):
+     origin auth login
+     origin auth status
+
+4. Clone (pick a folder you will remember, e.g. Documents):
+     cd %USERPROFILE%\Documents
+     git clone https://origin.cursor.com/git/51mon/Sudoku.git
+     cd Sudoku
+     npm install
+
+5. Run on PC:
+     npm run dev
+     Browser: http://localhost:5173/
+
+
+PART 2 — GET CHANGES ONTO THE PHONE
+------------------------------------
+After agents merge to main on Origin:
+
+  Option A (what you already do): Codebase → Download → extract/replace into
+    phone: .../obsidian/development/Sudoku
+    then: npm install && npm run dev -- --host
+
+  Option B: On PC after git pull, zip the Sudoku folder (exclude node_modules),
+    copy zip to phone (USB, Drive, Obsidian sync), unzip over Sudoku, npm install.
+
+Phone does not need git if you use A or B.
+
+
+PART 3 — PHONE CLEANUP (recommended if using PC for git)
+--------------------------------------------------------
+  proot-distro remove ubuntu
+  rm -f ~/.local/bin/origin ~/origin.tar.gz
+
+See PHONE-STATE-AND-CLEANUP.txt
+
+
+WHY ORIGIN "FAILED" ON PHONE
+-----------------------------
+  • Cannot run origin in Termux        → platform limit (real "can't do" there).
+  • auth login timed out in proot      → process issue (URL must open in browser
+                                         while CLI waits); not proof Origin is broken on PC.
+
+Use W10 for Origin + git. Use phone to run npm and tap the UI.
