@@ -19,7 +19,8 @@ PART A — ONE-TIME SETUP
    ls -l "$HOME/origin.tar.gz"
    (must show a large file — if curl error 23, run: termux-setup-storage , or: df -h ~)
 
-   tar -xOf "$HOME/origin.tar.gz" co > "$HOME/.local/bin/origin"
+   # Use member "origin" — "co" is a hard link; Termux tar often extracts it as 0 bytes.
+   tar -xOf "$HOME/origin.tar.gz" origin > "$HOME/.local/bin/origin"
    chmod +x "$HOME/.local/bin/origin"
    export PATH="$HOME/.local/bin:$PATH"
    origin --version

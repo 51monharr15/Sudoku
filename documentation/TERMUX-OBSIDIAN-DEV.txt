@@ -1,0 +1,83 @@
+SUDOKU — TEST ON ANDROID (Obsidian folder, local web server)
+=============================================================
+
+Goal: one folder you can refresh from the Codebase download, run a dev
+server in Termux, open in Chrome. No git and no Origin CLI required.
+
+
+YOU CAN IGNORE (messy false starts)
+-----------------------------------
+  ~/.local/bin/origin          (does not run in Termux — safe to leave or delete)
+  ~/origin.tar.gz              (optional delete)
+  proot-distro / Ubuntu        (only for git pull later — not needed to test UI)
+
+Keep:  pkg install nodejs-lts git curl  (if already installed — fine)
+
+
+WHERE TO PUT THE REPO
+---------------------
+Use a path inside your Obsidian vault so you can find it in Files/Obsidian.
+
+1. Once per phone (storage access):
+     termux-setup-storage
+
+2. Example vault path (change if yours differs):
+     ~/storage/shared/Documents/Obsidian
+
+3. Project folder (create once):
+     mkdir -p ~/storage/shared/Documents/Obsidian/Dev/Sudoku
+
+   All steps below use that folder as SUDOKU=...
+
+
+REFRESH CODE FROM CURSOR (no git)
+---------------------------------
+1. Browser: Codebase → Sudoku → Settings → Advanced → Download (.tar.gz)
+
+2. Termux:
+     cd ~/storage/shared/Documents/Obsidian/Dev
+     rm -rf Sudoku-old
+     mv Sudoku Sudoku-old
+     tar -xzf /path/where/browser/saved/Sudoku-....tar.gz
+     (Adjust: often extracts to a folder like Sudoku or Sudoku-main — rename to Sudoku)
+
+3. Or unpack over existing Sudoku if you prefer (keep node_modules only if npm install fails after — usually run npm install again)
+
+
+RUN LOCAL TEST SERVER (every session)
+-------------------------------------
+     cd ~/storage/shared/Documents/Obsidian/Dev/Sudoku
+     npm install
+     npm run dev -- --host
+
+   Termux prints a URL like:
+     http://127.0.0.1:5173/
+     http://192.168.x.x:5173/
+
+   On the same phone: open Chrome → http://127.0.0.1:5173/
+
+   Version: small text at bottom of app (should match file VERSION in repo root).
+
+
+WHAT "PROTOTYPE" MEANT (UI)
+---------------------------
+The UX spec in docs/UI-UX-REQUIREMENTS.md — compact phone layout, #/✎,
+digit pad, swipe to techniques, consequence list stepping — is on main
+branch as a reviewable prototype. Highlights (Q5b) are draft; your feedback
+revises them.
+
+Pending (not on main until merged): pad digits staying selected + multi-digit
+highlights (branch cursor/digit-select-persist-0aba, version 2026.09.27.2).
+
+
+GIT PULL (OPTIONAL, LATER)
+--------------------------
+Only if you want pull instead of re-download. Needs Origin login inside
+Ubuntu proot (see TERMUX-GIT-FULL-STEPS.txt). Skip until download workflow
+is boring and easy.
+
+
+OLD FOLDER ~/51mon-Sudoku-559bd1b
+---------------------------------
+Still works for dev if you prefer. To switch to Obsidian path: copy or
+re-download into Dev/Sudoku as above, then use only that folder.
