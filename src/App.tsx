@@ -75,11 +75,11 @@ export default function App() {
 
   const activeDigit = selectedDigits.length > 0 ? selectedDigits[selectedDigits.length - 1] : null
 
-  /** Digits stay selected until ⌫#; re-tap moves digit to end (active for cell taps). */
+  /** Tap toggles selection; last selected stays active for cell taps. ⌫# clears all. */
   const selectDigit = useCallback((digit: Digit) => {
     setSelectedDigits((prev) => {
       const i = prev.indexOf(digit)
-      if (i >= 0) return [...prev.slice(0, i), ...prev.slice(i + 1), digit]
+      if (i >= 0) return prev.filter((_, idx) => idx !== i)
       return [...prev, digit]
     })
   }, [])
@@ -181,16 +181,6 @@ export default function App() {
     return map
   }, [conflictAt, conflictPeers, activeStep, pendingElims, selectedCell])
 
-  const valueMatchCells = useMemo(() => {
-    const set = new Set<number>()
-    if (selectedDigits.length === 0) return set
-    for (let cell = 0; cell < 81; cell++) {
-      const v = values[cell]
-      if (v !== 0 && selectedDigits.includes(v)) set.add(cell)
-    }
-    return set
-  }, [selectedDigits, values])
-
   const techCounts = useMemo(() => countTechniques(clSteps), [clSteps])
 
   const showApply = pendingElims.length > 0
@@ -258,7 +248,6 @@ export default function App() {
               selectedCell={selectedCell}
               selectedDigits={selectedDigits}
               highlights={highlights}
-              valueMatchCells={valueMatchCells}
               onSelectCell={handleCell}
             />
             <ClStepBar
@@ -286,37 +275,47 @@ export default function App() {
       </div>
 
       <div className="bottom-bar">
-        <div className="mode-toggle">
-          <button
-            type="button"
-            className={`btn toggle compact ${entryMode === 'solution' ? 'on' : ''}`}
-            onClick={() => setEntryMode('solution')}
-          >
-            #
-          </button>
-          <button
-            type="button"
-            className={`btn toggle compact ${entryMode === 'pencil' ? 'on' : ''}`}
-            onClick={() => setEntryMode('pencil')}
-          >
-            ✎
-          </button>
-        </div>
-        <div className="numpad compact" role="group" aria-label="Digits">
-          {([1, 2, 3, 4, 5, 6, 7, 8, 9] as const).map((n) => (
+        <div className="entry-strip">
+          <div className="mode-toggle" role="group" aria-label="Entry mode">
             <button
-              key={n}
               type="button"
-              className={`num ${selectedDigits.includes(n) ? 'picked' : ''} ${
-                activeDigit === n ? 'last-picked' : ''
-              }`}
-              onClick={() => selectDigit(n)}
+              className={`btn toggle compact mode-btn ${entryMode === 'solution' ? 'on' : ''}`}
+              onClick={() => setEntryMode('solution')}
+              aria-label="Solution"
             >
-              {n}
+              #
             </button>
-          ))}
-          <button type="button" className="num clear-digits" onClick={clearSelectedDigits} aria-label="Clear selected digits">
-            ⌫#
+            <button
+              type="button"
+              className={`btn toggle compact mode-btn ${entryMode === 'pencil' ? 'on' : ''}`}
+              onClick={() => setEntryMode('pencil')}
+              aria-label="Pencil"
+            >
+              ✎
+            </button>
+          </div>
+          <div className="numpad numpad-3x3" role="group" aria-label="Digits">
+            {([1, 2, 3, 4, 5, 6, 7, 8, 9] as const).map((n) => (
+              <button
+                key={n}
+                type="button"
+                data-digit={n}
+                className={`num ${selectedDigits.includes(n) ? 'picked' : ''} ${
+                  activeDigit === n ? 'last-picked' : ''
+                }`}
+                onClick={() => selectDigit(n)}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className="btn clear-digits-btn"
+            onClick={clearSelectedDigits}
+            aria-label="Clear all selected digits"
+          >
+            ⌫
           </button>
         </div>
         <footer className="app-footer">

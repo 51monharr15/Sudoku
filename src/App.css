@@ -1,6 +1,15 @@
 :root {
   --bg: #0f0f1a;
   --surface: #1a1a2e;
+  --digit-1: #ff6b6b;
+  --digit-2: #ffa94d;
+  --digit-3: #ffd43b;
+  --digit-4: #69db7c;
+  --digit-5: #38d9a9;
+  --digit-6: #4dabf7;
+  --digit-7: #748ffc;
+  --digit-8: #da77f2;
+  --digit-9: #f783ac;
   --accent: #e94560;
   --accent-dim: #a82f44;
   --text: #eaeaea;
@@ -665,27 +674,178 @@ body {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+}
+
+.entry-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .mode-toggle {
   display: flex;
-  gap: 4px;
+  flex-direction: column;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
-.mode-toggle .btn.toggle.compact {
-  flex: 0 0 44px;
-}
-
-.numpad.compact {
-  gap: 4px;
-}
-
-.numpad.compact .num {
-  aspect-ratio: 1.1;
-  font-size: 1rem;
-  border-radius: 8px;
+.mode-toggle .mode-btn {
+  width: 2rem;
+  height: 2rem;
+  min-height: 0;
   padding: 0;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+.numpad-3x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  flex: 1;
+  max-width: 9.5rem;
+}
+
+.numpad-3x3 .num {
+  width: 100%;
+  aspect-ratio: 1;
+  min-height: 0;
+  max-height: 2rem;
+  border: 1px solid var(--grid-line);
+  border-radius: 4px;
+  padding: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  background: var(--surface);
+}
+
+.numpad-3x3 .num[data-digit='1'].picked {
+  border-color: var(--digit-1);
+  color: var(--digit-1);
+  background: rgba(255, 107, 107, 0.15);
+}
+.numpad-3x3 .num[data-digit='2'].picked {
+  border-color: var(--digit-2);
+  color: var(--digit-2);
+  background: rgba(255, 169, 77, 0.15);
+}
+.numpad-3x3 .num[data-digit='3'].picked {
+  border-color: var(--digit-3);
+  color: var(--digit-3);
+  background: rgba(255, 212, 59, 0.12);
+}
+.numpad-3x3 .num[data-digit='4'].picked {
+  border-color: var(--digit-4);
+  color: var(--digit-4);
+  background: rgba(105, 219, 124, 0.12);
+}
+.numpad-3x3 .num[data-digit='5'].picked {
+  border-color: var(--digit-5);
+  color: var(--digit-5);
+  background: rgba(56, 217, 169, 0.12);
+}
+.numpad-3x3 .num[data-digit='6'].picked {
+  border-color: var(--digit-6);
+  color: var(--digit-6);
+  background: rgba(77, 171, 247, 0.12);
+}
+.numpad-3x3 .num[data-digit='7'].picked {
+  border-color: var(--digit-7);
+  color: var(--digit-7);
+  background: rgba(116, 143, 252, 0.12);
+}
+.numpad-3x3 .num[data-digit='8'].picked {
+  border-color: var(--digit-8);
+  color: var(--digit-8);
+  background: rgba(218, 119, 242, 0.12);
+}
+.numpad-3x3 .num[data-digit='9'].picked {
+  border-color: var(--digit-9);
+  color: var(--digit-9);
+  background: rgba(247, 131, 172, 0.12);
+}
+
+.numpad-3x3 .num.last-picked {
+  box-shadow: 0 0 0 1px currentColor;
+}
+
+.clear-digits-btn {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--grid-line);
+  color: var(--muted);
+}
+
+.digit-hl-1 {
+  color: var(--digit-1) !important;
+}
+.digit-hl-2 {
+  color: var(--digit-2) !important;
+}
+.digit-hl-3 {
+  color: var(--digit-3) !important;
+}
+.digit-hl-4 {
+  color: var(--digit-4) !important;
+}
+.digit-hl-5 {
+  color: var(--digit-5) !important;
+}
+.digit-hl-6 {
+  color: var(--digit-6) !important;
+}
+.digit-hl-7 {
+  color: var(--digit-7) !important;
+}
+.digit-hl-8 {
+  color: var(--digit-8) !important;
+}
+.digit-hl-9 {
+  color: var(--digit-9) !important;
+}
+
+.cand-hl-1 {
+  color: var(--digit-1) !important;
+  font-weight: 800;
+}
+.cand-hl-2 {
+  color: var(--digit-2) !important;
+  font-weight: 800;
+}
+.cand-hl-3 {
+  color: var(--digit-3) !important;
+  font-weight: 800;
+}
+.cand-hl-4 {
+  color: var(--digit-4) !important;
+  font-weight: 800;
+}
+.cand-hl-5 {
+  color: var(--digit-5) !important;
+  font-weight: 800;
+}
+.cand-hl-6 {
+  color: var(--digit-6) !important;
+  font-weight: 800;
+}
+.cand-hl-7 {
+  color: var(--digit-7) !important;
+  font-weight: 800;
+}
+.cand-hl-8 {
+  color: var(--digit-8) !important;
+  font-weight: 800;
+}
+.cand-hl-9 {
+  color: var(--digit-9) !important;
+  font-weight: 800;
 }
 
 .app-footer {
