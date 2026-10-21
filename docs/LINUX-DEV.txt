@@ -1,0 +1,41 @@
+Sudoku — Linux laptop development (stable layout)
+=================================================
+
+Concepts
+--------
+  SOURCE ROOT   One folder that is a git checkout. All app files live here.
+                You edit src/, run npm here, git pull here.
+
+  REFRESH       git pull origin main   (not tar, not copy from phone)
+
+  DEV RUN       npm run dev  →  browser http://localhost:5173/
+
+  STAGED RUN    npm run build && npm run preview  →  http://localhost:4173/
+
+  RELEASE       npm run deploy:zip  →  deploy/website/ for FTP
+
+Phone (Android) is different: shared storage + ~/sudoku-tools for node_modules.
+Laptop: everything in SOURCE ROOT only.
+
+
+One-time setup
+--------------
+  1. Install Node LTS (includes npm).
+  2. Install Origin CLI: curl -fsSL https://downloads.cursor.com/origin/install.sh | sh
+  3. origin auth login
+  4. git clone https://origin.cursor.com/git/51mon/Sudoku.git
+     (pick one parent directory you will remember; cd into Sudoku)
+  5. npm install
+
+
+Every session
+-------------
+  cd /your/path/Sudoku
+  git pull origin main
+  npm install
+  npm run dev
+
+
+Repo URL
+--------
+  https://origin.cursor.com/git/51mon/Sudoku.git
