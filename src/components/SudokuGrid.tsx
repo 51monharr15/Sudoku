@@ -81,8 +81,8 @@ export function SudokuGrid({
             {marks && <EdgeMarks marks={marks} />}
             {displayValue !== 0 ? (
               <span
-                className={`digit ${isGiven ? 'given' : 'user'} ${
-                  selectedSet.has(displayValue) ? `digit-hl digit-hl-${displayValue}` : ''
+                className={`digit digit-color-${displayValue} ${isGiven ? 'given' : 'user'} ${
+                  selectedSet.has(displayValue) ? 'digit-pad-pick' : ''
                 }`}
               >
                 {displayValue}

@@ -62,7 +62,8 @@ export default function App() {
   )
   const [clStepIndex, setClStepIndex] = useState<number | null>(null)
   const [pendingElims, setPendingElims] = useState<{ cell: number; digit: Digit }[]>([])
-  const [techEnabled, setTechEnabled] = useState<Partial<Record<TechniqueKey, boolean>>>({})
+  const [techActive, setTechActive] = useState<Partial<Record<TechniqueKey, boolean>>>({})
+  const [mainTab, setMainTab] = useState<'play' | 'consequences'>('play')
 
   const rebuildCl = useCallback((v: Grid, c: CandidateMask[]) => {
     const steps = buildConsequenceList(v, c)
@@ -184,23 +185,23 @@ export default function App() {
       for (const c of stepHighlightCells(activeStep)) map.set(c, 'cl-finding')
     }
     for (const { cell } of pendingElims) map.set(cell, 'cl-elim')
-    if (techEnabled.Ns) {
+    if (techActive.Ns) {
       for (const c of nakedSingleCells(values, candidates)) map.set(c, 'tech-ns')
     }
-    if (techEnabled.Os) {
+    if (techActive.Os) {
       for (const c of hiddenSingleCells(values, candidates)) map.set(c, 'tech-os')
     }
     if (selectedCell !== null && !map.has(selectedCell)) map.set(selectedCell, 'selected')
     return map
-  }, [conflictAt, conflictPeers, activeStep, pendingElims, selectedCell, techEnabled, values, candidates])
+  }, [conflictAt, conflictPeers, activeStep, pendingElims, selectedCell, techActive, values, candidates])
 
   const techCounts = useMemo(() => techniqueCounts(values, candidates), [values, candidates])
 
   const edgeMarks = useMemo(() => {
-    if (!techEnabled.Sd) return new Map()
+    if (!techActive.Sd) return new Map()
     const groups = strongLinksForN(candidates, 2)
     return allStrongDoubleMarks(groups)
-  }, [techEnabled.Sd, candidates])
+  }, [techActive.Sd, candidates])
 
   const showApply = pendingElims.length > 0
 
@@ -240,7 +241,26 @@ export default function App() {
         <button type="button" className="btn icon menu-btn" onClick={() => setMenuOpen(true)} aria-label="Menu">
           ☰
         </button>
-        <span className="swipe-hint">Swipe → techniques</span>
+        <div className="main-tabs" role="tablist" aria-label="Board sections">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mainTab === 'play'}
+            className={`tab-btn ${mainTab === 'play' ? 'on' : ''}`}
+            onClick={() => setMainTab('play')}
+          >
+            Grid
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mainTab === 'consequences'}
+            className={`tab-btn ${mainTab === 'consequences' ? 'on' : ''}`}
+            onClick={() => setMainTab('consequences')}
+          >
+            Consequences
+          </button>
+        </div>
       </header>
 
       {importError && (
@@ -257,19 +277,19 @@ export default function App() {
         </div>
       )}
 
-      <div className="swipe-viewport">
-        <div className="swipe-track">
-          <section className="swipe-panel" aria-label="Grid">
-            <SudokuGrid
-              values={values}
-              givens={givens}
-              candidates={candidates}
-              selectedCell={selectedCell}
-              selectedDigits={selectedDigits}
-              highlights={highlights}
-              edgeMarks={edgeMarks}
-              onSelectCell={handleCell}
-            />
+      <section className="main-stage" aria-label="Sudoku board">
+        <SudokuGrid
+          values={values}
+          givens={givens}
+          candidates={candidates}
+          selectedCell={selectedCell}
+          selectedDigits={selectedDigits}
+          highlights={highlights}
+          edgeMarks={edgeMarks}
+          onSelectCell={handleCell}
+        />
+        {mainTab === 'play' ? (
+          <>
             <ClStepBar
               steps={clSteps}
               stepIndex={clStepIndex}
@@ -283,18 +303,17 @@ export default function App() {
                 Set naked single
               </button>
             )}
-          </section>
-          <section className="swipe-panel" aria-label="Techniques">
-            <TechniqueIndex
-              counts={techCounts}
-              enabled={techEnabled}
-              onToggle={(key: TechniqueKey) =>
-                setTechEnabled((e) => ({ ...e, [key]: !e[key] }))
-              }
-            />
-          </section>
-        </div>
-      </div>
+          </>
+        ) : (
+          <TechniqueIndex
+            counts={techCounts}
+            active={techActive}
+            onSelect={(key: TechniqueKey) =>
+              setTechActive((e) => ({ ...e, [key]: !e[key] }))
+            }
+          />
+        )}
+      </section>
 
       <div className="bottom-bar">
         <div className="entry-strip">

@@ -1,40 +1,33 @@
-import {
-  TECHNIQUE_LABEL,
-  TECHNIQUE_ORDER,
-  type TechniqueKey,
-} from '../sudoku/techniqueStats'
+import { TECHNIQUE_ROWS, type TechniqueKey } from '../sudoku/techniqueStats'
 
 interface TechniqueIndexProps {
   counts: Record<TechniqueKey, number>
-  enabled: Partial<Record<TechniqueKey, boolean>>
-  onToggle: (key: TechniqueKey) => void
+  active: Partial<Record<TechniqueKey, boolean>>
+  onSelect: (key: TechniqueKey) => void
 }
 
-export function TechniqueIndex({ counts, enabled, onToggle }: TechniqueIndexProps) {
+export function TechniqueIndex({ counts, active, onSelect }: TechniqueIndexProps) {
   return (
     <div className="tech-index">
-      <h2 className="tech-title">Consequences</h2>
       <p className="tech-hint">
-        Swipe ← for grid. Turn a row on to see that pattern on the board (counts are how many exist now).
+        Tap a row to show that pattern on the grid above. The number is how many exist now (0 = none to show).
       </p>
       <ul className="tech-list">
-        {TECHNIQUE_ORDER.map((key) => {
+        {TECHNIQUE_ROWS.map(({ key, title }) => {
           const count = counts[key] ?? 0
+          const on = active[key] ?? false
           return (
             <li key={key}>
-              <label className={`tech-row ${count === 0 ? 'tech-row-dim' : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={enabled[key] ?? false}
-                  onChange={() => onToggle(key)}
-                  disabled={count === 0}
-                />
+              <button
+                type="button"
+                className={`tech-row-btn ${on ? 'on' : ''} ${count === 0 ? 'zero' : ''}`}
+                onClick={() => onSelect(key)}
+                disabled={count === 0}
+              >
                 <span className="tech-abbr">{key}</span>
+                <span className="tech-title-text">{title}</span>
                 <span className="tech-count">{count}</span>
-              </label>
-              {enabled[key] && (
-                <p className="tech-desc">{TECHNIQUE_LABEL[key]}</p>
-              )}
+              </button>
             </li>
           )
         })}

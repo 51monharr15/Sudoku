@@ -3,20 +3,47 @@ import { cloneGrid, maskDigits } from './grid'
 import { strongLinksForN } from './strongLinks'
 import type { CandidateMask, Grid } from './types'
 
-export type TechniqueKey = 'Ns' | 'Os' | 'Nd' | 'Od' | 'Sd' | 'St' | 'Nt' | 'Ot'
+/** Short code + full title shown in the consequences tab. */
+export type TechniqueKey =
+  | 'Ns'
+  | 'Os'
+  | 'Nd'
+  | 'Od'
+  | 'Nt'
+  | 'Ot'
+  | 'Nq'
+  | 'Oq'
+  | 'Sd'
+  | 'St'
+  | 'Sq'
+  | 'Ss'
+  | 'pointing'
+  | 'locked'
+  | 'x_wing'
+  | 'xy_wing'
+  | 'skyscraper'
+  | 'two_string_kite'
 
-export const TECHNIQUE_ORDER: TechniqueKey[] = ['Ns', 'Os', 'Nd', 'Od', 'Sd', 'St', 'Nt', 'Ot']
-
-export const TECHNIQUE_LABEL: Record<TechniqueKey, string> = {
-  Ns: 'Naked single — one candidate left in a cell',
-  Os: 'Obscured single — one place for a digit in a row, column, or box',
-  Nd: 'Naked double — two cells, two digits only (not wired yet)',
-  Od: 'Obscured double — two places for one digit (not wired yet)',
-  Sd: 'Strong double — digit in exactly two cells in one region',
-  St: 'Strong triple — three cells in one region',
-  Nt: 'Naked triple (not wired yet)',
-  Ot: 'Obscured triple (not wired yet)',
-}
+export const TECHNIQUE_ROWS: { key: TechniqueKey; title: string }[] = [
+  { key: 'Ns', title: 'Naked single' },
+  { key: 'Os', title: 'Obscured single' },
+  { key: 'Nd', title: 'Naked double' },
+  { key: 'Od', title: 'Obscured double' },
+  { key: 'Nt', title: 'Naked triple' },
+  { key: 'Ot', title: 'Obscured triple' },
+  { key: 'Nq', title: 'Naked quad' },
+  { key: 'Oq', title: 'Obscured quad' },
+  { key: 'Ss', title: 'Strong single (solved cell)' },
+  { key: 'Sd', title: 'Strong double' },
+  { key: 'St', title: 'Strong triple' },
+  { key: 'Sq', title: 'Strong quad' },
+  { key: 'pointing', title: 'Pointing pair / triple' },
+  { key: 'locked', title: 'Locked candidates' },
+  { key: 'x_wing', title: 'X-Wing' },
+  { key: 'xy_wing', title: 'XY-Wing' },
+  { key: 'skyscraper', title: 'Skyscraper' },
+  { key: 'two_string_kite', title: 'Two-string kite' },
+]
 
 export function countNakedSingles(values: Grid, candidates: CandidateMask[]): number {
   let n = 0
@@ -49,23 +76,30 @@ export function hiddenSingleCells(values: Grid, candidates: CandidateMask[]): nu
   return cells
 }
 
-export function countHiddenSingles(values: Grid, candidates: CandidateMask[]): number {
-  return hiddenSingleCells(values, candidates).length
-}
-
 export function countStrongDoubles(candidates: CandidateMask[]): number {
   return strongLinksForN(candidates, 2).length
 }
 
 export function techniqueCounts(values: Grid, candidates: CandidateMask[]): Record<TechniqueKey, number> {
-  return {
+  const base: Record<TechniqueKey, number> = {
     Ns: countNakedSingles(values, candidates),
-    Os: countHiddenSingles(values, candidates),
+    Os: hiddenSingleCells(values, candidates).length,
     Nd: 0,
     Od: 0,
-    Sd: countStrongDoubles(candidates),
-    St: strongLinksForN(candidates, 3).length,
     Nt: 0,
     Ot: 0,
+    Nq: 0,
+    Oq: 0,
+    Ss: 0,
+    Sd: countStrongDoubles(candidates),
+    St: strongLinksForN(candidates, 3).length,
+    Sq: strongLinksForN(candidates, 4).length,
+    pointing: 0,
+    locked: 0,
+    x_wing: 0,
+    xy_wing: 0,
+    skyscraper: 0,
+    two_string_kite: 0,
   }
+  return base
 }
