@@ -1,20 +1,19 @@
-import { colOf, rowOf } from './grid'
+import { colOf, maskHas, rowOf } from './grid'
 import type { StrongLinkGroup } from './strongLinks'
+import type { CandidateMask, Digit } from './types'
 
 export type EdgeMark = 'top' | 'bottom' | 'left' | 'right'
+export type UnitKind = 'row' | 'col' | 'box'
 
-export type CellMarks = Partial<Record<EdgeMark, true>>
+export type CandStrongMark = {
+  cell: number
+  digit: Digit
+  edges: EdgeMark[]
+  unit: UnitKind
+}
 
-/** Merge mark maps per cell index. */
-export function mergeCellMarks(maps: Map<number, CellMarks>[]): Map<number, CellMarks> {
-  const out = new Map<number, CellMarks>()
-  for (const m of maps) {
-    for (const [cell, marks] of m) {
-      const prev = out.get(cell) ?? {}
-      out.set(cell, { ...prev, ...marks })
-    }
-  }
-  return out
+export function candMarkKey(cell: number, digit: Digit): string {
+  return `${cell}:${digit}`
 }
 
 function boxOrigin(boxIndex: number): { br: number; bc: number } {
@@ -40,56 +39,60 @@ function distToBoxEdge(cell: number, boxIndex: number): {
   }
 }
 
-function marksForColumnPair(cells: number[]): Map<number, CellMarks> {
-  const m = new Map<number, CellMarks>()
-  for (const cell of cells) {
-    m.set(cell, { left: true, right: true })
-  }
-  return m
-}
-
-function marksForRowPair(cells: number[]): Map<number, CellMarks> {
-  const m = new Map<number, CellMarks>()
-  for (const cell of cells) {
-    m.set(cell, { top: true, bottom: true })
-  }
-  return m
-}
-
-function marksForBoxPair(cells: number[], boxIndex: number): Map<number, CellMarks> {
-  const m = new Map<number, CellMarks>()
-  for (const cell of cells) {
-    const d = distToBoxEdge(cell, boxIndex)
-    const marks: CellMarks = {}
-    if (d.left <= d.right) marks.left = true
-    else marks.right = true
-    if (d.top <= d.bottom) marks.top = true
-    else marks.bottom = true
-    m.set(cell, marks)
-  }
-  return m
-}
-
-/** Strong double (two cells): column = side marks; row = top/bottom; box = side + top/bottom toward nearest box edge. */
-export function marksForStrongDouble(group: StrongLinkGroup): Map<number, CellMarks> {
-  if (group.cells.length !== 2) return new Map()
-  const cells = [...group.cells]
-  switch (group.unit) {
+function edgesForUnit(unit: UnitKind, cell: number, unitIndex: number): EdgeMark[] {
+  switch (unit) {
     case 'col':
-      return marksForColumnPair(cells)
+      return ['left', 'right']
     case 'row':
-      return marksForRowPair(cells)
-    case 'box':
-      return marksForBoxPair(cells, group.unitIndex)
+      return ['top', 'bottom']
+    case 'box': {
+      const d = distToBoxEdge(cell, unitIndex)
+      const edges: EdgeMark[] = []
+      edges.push(d.left <= d.right ? 'left' : 'right')
+      edges.push(d.top <= d.bottom ? 'top' : 'bottom')
+      return edges
+    }
     default:
-      return new Map()
+      return []
   }
 }
 
-export function allStrongDoubleMarks(groups: StrongLinkGroup[]): Map<number, CellMarks> {
-  const parts: Map<number, CellMarks>[] = []
-  for (const g of groups) {
-    if (g.cells.length === 2) parts.push(marksForStrongDouble(g))
+/** Per-candidate edge marks for a strong link group (double/triple/quad). */
+export function marksForStrongGroup(
+  group: StrongLinkGroup,
+  candidates: CandidateMask[],
+): CandStrongMark[] {
+  const out: CandStrongMark[] = []
+  for (const cell of group.cells) {
+    for (const digit of group.digits) {
+      if (!maskHas(candidates[cell], digit)) continue
+      out.push({
+        cell,
+        digit,
+        edges: edgesForUnit(group.unit, cell, group.unitIndex),
+        unit: group.unit,
+      })
+    }
   }
-  return mergeCellMarks(parts)
+  return out
+}
+
+export function allStrongLinkCandMarks(
+  groups: StrongLinkGroup[],
+  candidates: CandidateMask[],
+): Map<string, CandStrongMark> {
+  const out = new Map<string, CandStrongMark>()
+  for (const g of groups) {
+    for (const m of marksForStrongGroup(g, candidates)) {
+      const k = candMarkKey(m.cell, m.digit)
+      const prev = out.get(k)
+      if (!prev) {
+        out.set(k, m)
+        continue
+      }
+      const edges = new Set([...prev.edges, ...m.edges])
+      out.set(k, { ...prev, edges: [...edges] })
+    }
+  }
+  return out
 }

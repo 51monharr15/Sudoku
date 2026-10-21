@@ -12,7 +12,7 @@ import {
   stepHighlightCells,
   toggleCandidateMask,
 } from './sudoku/consequenceList'
-import { allStrongDoubleMarks } from './sudoku/strongPairMarks'
+import { allStrongLinkCandMarks } from './sudoku/strongPairMarks'
 import { strongLinksForN } from './sudoku/strongLinks'
 import {
   hiddenSingleCells,
@@ -63,7 +63,7 @@ export default function App() {
   const [clStepIndex, setClStepIndex] = useState<number | null>(null)
   const [pendingElims, setPendingElims] = useState<{ cell: number; digit: Digit }[]>([])
   const [techActive, setTechActive] = useState<Partial<Record<TechniqueKey, boolean>>>({})
-  const [mainTab, setMainTab] = useState<'play' | 'consequences'>('play')
+  const [consequencesOpen, setConsequencesOpen] = useState(false)
 
   const rebuildCl = useCallback((v: Grid, c: CandidateMask[]) => {
     const steps = buildConsequenceList(v, c)
@@ -197,11 +197,13 @@ export default function App() {
 
   const techCounts = useMemo(() => techniqueCounts(values, candidates), [values, candidates])
 
-  const edgeMarks = useMemo(() => {
-    if (!techActive.Sd) return new Map()
-    const groups = strongLinksForN(candidates, 2)
-    return allStrongDoubleMarks(groups)
-  }, [techActive.Sd, candidates])
+  const candStrongMarks = useMemo(() => {
+    const groups: ReturnType<typeof strongLinksForN> = []
+    if (techActive.Sd) groups.push(...strongLinksForN(candidates, 2))
+    if (techActive.St) groups.push(...strongLinksForN(candidates, 3))
+    if (techActive.Sq) groups.push(...strongLinksForN(candidates, 4))
+    return allStrongLinkCandMarks(groups, candidates)
+  }, [techActive.Sd, techActive.St, techActive.Sq, candidates])
 
   const showApply = pendingElims.length > 0
 
@@ -241,26 +243,14 @@ export default function App() {
         <button type="button" className="btn icon menu-btn" onClick={() => setMenuOpen(true)} aria-label="Menu">
           ☰
         </button>
-        <div className="main-tabs" role="tablist" aria-label="Board sections">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mainTab === 'play'}
-            className={`tab-btn ${mainTab === 'play' ? 'on' : ''}`}
-            onClick={() => setMainTab('play')}
-          >
-            Grid
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mainTab === 'consequences'}
-            className={`tab-btn ${mainTab === 'consequences' ? 'on' : ''}`}
-            onClick={() => setMainTab('consequences')}
-          >
-            Consequences
-          </button>
-        </div>
+        <button
+          type="button"
+          className={`tab-btn consequences-toggle ${consequencesOpen ? 'on' : ''}`}
+          aria-pressed={consequencesOpen}
+          onClick={() => setConsequencesOpen((o) => !o)}
+        >
+          Consequences {consequencesOpen ? '▾' : '▸'}
+        </button>
       </header>
 
       {importError && (
@@ -285,26 +275,10 @@ export default function App() {
           selectedCell={selectedCell}
           selectedDigits={selectedDigits}
           highlights={highlights}
-          edgeMarks={edgeMarks}
+          candStrongMarks={candStrongMarks}
           onSelectCell={handleCell}
         />
-        {mainTab === 'play' ? (
-          <>
-            <ClStepBar
-              steps={clSteps}
-              stepIndex={clStepIndex}
-              onBack={clBack}
-              onForward={clForward}
-              showApply={showApply}
-              onApply={applyPending}
-            />
-            {activeStep?.kind === 'naked_single' && (
-              <button type="button" className="btn primary compact set-ns" onClick={applyNakedSingleFromStep}>
-                Set naked single
-              </button>
-            )}
-          </>
-        ) : (
+        {consequencesOpen && (
           <TechniqueIndex
             counts={techCounts}
             active={techActive}
@@ -312,6 +286,19 @@ export default function App() {
               setTechActive((e) => ({ ...e, [key]: !e[key] }))
             }
           />
+        )}
+        <ClStepBar
+          steps={clSteps}
+          stepIndex={clStepIndex}
+          onBack={clBack}
+          onForward={clForward}
+          showApply={showApply}
+          onApply={applyPending}
+        />
+        {activeStep?.kind === 'naked_single' && (
+          <button type="button" className="btn primary compact set-ns" onClick={applyNakedSingleFromStep}>
+            Set naked single
+          </button>
         )}
       </section>
 

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { colOf, rowOf, maskDigits } from '../sudoku/grid'
-import type { CellMarks } from '../sudoku/strongPairMarks'
+import type { CandStrongMark, EdgeMark } from '../sudoku/strongPairMarks'
+import { candMarkKey } from '../sudoku/strongPairMarks'
 import type { CandidateMask, CellValue, Digit, Grid } from '../sudoku/types'
 
 export type CellHighlight =
@@ -19,7 +20,7 @@ interface SudokuGridProps {
   selectedCell: number | null
   selectedDigits: Digit[]
   highlights: Map<number, CellHighlight>
-  edgeMarks: Map<number, CellMarks>
+  candStrongMarks: Map<string, CandStrongMark>
   onSelectCell: (cell: number) => void
 }
 
@@ -39,13 +40,16 @@ function cellClasses(
   return parts.join(' ')
 }
 
-function EdgeMarks({ marks }: { marks: CellMarks }) {
+function CandEdgeMarks({ mark }: { mark: CandStrongMark }) {
+  const unitClass = `unit-${mark.unit}`
   return (
     <>
-      {marks.top && <span className="edge-mark edge-top" aria-hidden />}
-      {marks.bottom && <span className="edge-mark edge-bottom" aria-hidden />}
-      {marks.left && <span className="edge-mark edge-left" aria-hidden />}
-      {marks.right && <span className="edge-mark edge-right" aria-hidden />}
+      {mark.edges.map((e: EdgeMark) => (
+        <span key={e} className={`cand-edge cand-edge-${e} ${unitClass}`} aria-hidden />
+      ))}
+      <span className={`cand-unit-tag ${unitClass}`} aria-hidden>
+        {mark.unit === 'row' ? 'R' : mark.unit === 'col' ? 'C' : 'B'}
+      </span>
     </>
   )
 }
@@ -57,7 +61,7 @@ export function SudokuGrid({
   selectedCell,
   selectedDigits,
   highlights,
-  edgeMarks,
+  candStrongMarks,
   onSelectCell,
 }: SudokuGridProps) {
   const selectedSet = useMemo(() => new Set(selectedDigits), [selectedDigits])
@@ -68,7 +72,7 @@ export function SudokuGrid({
         const isGiven = givens[cell]
         const displayValue = value as CellValue
         const cands = displayValue === 0 ? maskDigits(candidates[cell]) : []
-        const marks = edgeMarks.get(cell)
+        const digitColored = displayValue !== 0 && selectedSet.has(displayValue)
         return (
           <button
             key={cell}
@@ -78,11 +82,10 @@ export function SudokuGrid({
             className={cellClasses(cell, selectedCell, highlights)}
             onClick={() => onSelectCell(cell)}
           >
-            {marks && <EdgeMarks marks={marks} />}
             {displayValue !== 0 ? (
               <span
-                className={`digit digit-color-${displayValue} ${isGiven ? 'given' : 'user'} ${
-                  selectedSet.has(displayValue) ? 'digit-pad-pick' : ''
+                className={`digit ${isGiven ? 'given' : 'user'} ${
+                  digitColored ? `digit-color-${displayValue}` : 'digit-muted'
                 }`}
               >
                 {displayValue}
@@ -93,14 +96,19 @@ export function SudokuGrid({
                   const d = (i + 1) as Digit
                   const on = cands.includes(d)
                   const picked = on && selectedSet.has(d)
+                  const sm = on ? candStrongMarks.get(candMarkKey(cell, d)) : undefined
+                  const showColor = picked || sm
                   return (
                     <span
                       key={d}
-                      className={`cand ${on ? 'on' : 'off'} cand-d${d} ${
-                        picked ? `cand-hl cand-hl-${d}` : ''
+                      className={`cand ${on ? 'on' : 'off'} ${
+                        showColor ? `cand-color-${d}` : on ? 'cand-muted' : ''
                       }`}
                     >
                       {on ? d : ''}
+                      {sm && (
+                        <CandEdgeMarks mark={sm} />
+                      )}
                     </span>
                   )
                 })}

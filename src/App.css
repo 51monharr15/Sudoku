@@ -14,6 +14,7 @@
   --accent-dim: #a82f44;
   --text: #eaeaea;
   --muted: #8888a0;
+  --digit-muted: #d0d0e8;
   --given: var(--digit-9);
   --user: var(--digit-6);
   --grid-line: #3a3a55;
@@ -334,24 +335,91 @@ body {
 }
 
 .cand {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.cand-edge {
+  position: absolute;
+  pointer-events: none;
+  background: currentColor;
+  z-index: 1;
+}
+
+.cand-edge-top {
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+}
+
+.cand-edge-bottom {
+  bottom: 0;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+}
+
+.cand-edge-left {
+  left: 0;
+  top: 12%;
+  bottom: 12%;
+  width: 2px;
+}
+
+.cand-edge-right {
+  right: 0;
+  top: 12%;
+  bottom: 12%;
+  width: 2px;
+}
+
+.cand-unit-tag {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.45em;
+  line-height: 1;
+  font-weight: 900;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.cand-unit-tag.unit-row {
+  color: #ff0;
+}
+
+.cand-unit-tag.unit-col {
+  color: #0ff;
+}
+
+.cand-unit-tag.unit-box {
+  color: #f0f;
 }
 
 .cand.off {
   visibility: hidden;
 }
 
-.cand.on.cand-d1 { color: var(--digit-1); }
-.cand.on.cand-d2 { color: var(--digit-2); }
-.cand.on.cand-d3 { color: var(--digit-3); }
-.cand.on.cand-d4 { color: var(--digit-4); }
-.cand.on.cand-d5 { color: var(--digit-5); }
-.cand.on.cand-d6 { color: var(--digit-6); }
-.cand.on.cand-d7 { color: var(--digit-7); }
-.cand.on.cand-d8 { color: var(--digit-8); }
-.cand.on.cand-d9 { color: var(--digit-9); }
+.cand-muted {
+  color: var(--digit-muted);
+}
+
+.cand-color-1 { color: var(--digit-1); }
+.cand-color-2 { color: var(--digit-2); }
+.cand-color-3 { color: var(--digit-3); }
+.cand-color-4 { color: var(--digit-4); }
+.cand-color-5 { color: var(--digit-5); }
+.cand-color-6 { color: var(--digit-6); }
+.cand-color-7 { color: var(--digit-7); }
+.cand-color-8 { color: var(--digit-8); }
+.cand-color-9 { color: var(--digit-9); }
+
+.digit-muted {
+  color: var(--digit-muted);
+}
 
 .cand-dim {
   opacity: 0.25;
@@ -617,7 +685,7 @@ body {
 .grid-wrap {
   flex: 1;
   min-height: 0;
-  max-height: min(62dvh, 100vw);
+  max-height: min(66dvh, 100vw);
   aspect-ratio: unset;
 }
 
@@ -671,43 +739,8 @@ body {
   background: rgba(255, 0, 255, 0.1);
 }
 
-.edge-mark {
-  position: absolute;
-  pointer-events: none;
-  background: #ff0;
-  z-index: 2;
-}
-
-.edge-top {
-  top: 2px;
-  left: 18%;
-  right: 18%;
-  height: 3px;
-  border-radius: 1px;
-}
-
-.edge-bottom {
-  bottom: 2px;
-  left: 18%;
-  right: 18%;
-  height: 3px;
-  border-radius: 1px;
-}
-
-.edge-left {
-  left: 2px;
-  top: 18%;
-  bottom: 18%;
-  width: 3px;
-  border-radius: 1px;
-}
-
-.edge-right {
-  right: 2px;
-  top: 18%;
-  bottom: 18%;
-  width: 3px;
-  border-radius: 1px;
+.consequences-toggle {
+  margin-left: auto;
 }
 
 .cl-bar {
