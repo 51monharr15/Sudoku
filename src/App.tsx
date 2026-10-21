@@ -13,7 +13,7 @@ import {
   toggleCandidateMask,
 } from './sudoku/consequenceList'
 import { allStrongLinkCandMarks } from './sudoku/strongPairMarks'
-import { strongLinksForN } from './sudoku/strongLinks'
+import { strongLinksForN, strongNakedSets } from './sudoku/strongLinks'
 import {
   hiddenSingleCells,
   nakedSingleCells,
@@ -201,7 +201,7 @@ export default function App() {
     const groups: ReturnType<typeof strongLinksForN> = []
     if (techActive.Sd) groups.push(...strongLinksForN(candidates, 2))
     if (techActive.St) groups.push(...strongLinksForN(candidates, 3))
-    if (techActive.Sq) groups.push(...strongLinksForN(candidates, 4))
+    if (techActive.Sq) groups.push(...strongNakedSets(candidates, 4))
     return allStrongLinkCandMarks(groups, candidates)
   }, [techActive.Sd, techActive.St, techActive.Sq, candidates])
 

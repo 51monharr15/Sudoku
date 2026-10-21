@@ -1,6 +1,6 @@
 import { findHiddenSingle, placeDigit } from './candidates'
 import { cloneGrid, maskDigits } from './grid'
-import { strongLinksForN } from './strongLinks'
+import { strongLinksForN, strongNakedSets } from './strongLinks'
 import type { CandidateMask, Grid } from './types'
 
 /** Short code + full title shown in the consequences tab. */
@@ -36,7 +36,7 @@ export const TECHNIQUE_ROWS: { key: TechniqueKey; title: string }[] = [
   { key: 'Ss', title: 'Strong single (solved cell)' },
   { key: 'Sd', title: 'Strong double' },
   { key: 'St', title: 'Strong triple' },
-  { key: 'Sq', title: 'Strong quad' },
+  { key: 'Sq', title: 'Strong quad (4 cells, those 4 digits only in the unit)' },
   { key: 'pointing', title: 'Pointing pair / triple' },
   { key: 'locked', title: 'Locked candidates' },
   { key: 'x_wing', title: 'X-Wing' },
@@ -93,7 +93,7 @@ export function techniqueCounts(values: Grid, candidates: CandidateMask[]): Reco
     Ss: 0,
     Sd: countStrongDoubles(candidates),
     St: strongLinksForN(candidates, 3).length,
-    Sq: strongLinksForN(candidates, 4).length,
+    Sq: strongNakedSets(candidates, 4).length,
     pointing: 0,
     locked: 0,
     x_wing: 0,

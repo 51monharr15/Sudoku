@@ -100,12 +100,11 @@ export function findNakedStrongLinks(
         if (union & (1 << d)) digits.push(d as Digit)
       }
       if (filterDigits && !filterDigits.some((fd) => digits.includes(fd))) continue
-      // Must not extend: no other cell in unit has only candidates from this set
+      // Naked n-set: none of these digits may appear in any other cell in the unit.
       let valid = true
       for (const c of all) {
         if (cells.includes(c)) continue
-        const m = candidates[c]
-        if ((m & ~union) === 0 && m !== 0) {
+        if ((candidates[c] & union) !== 0) {
           valid = false
           break
         }
@@ -116,6 +115,11 @@ export function findNakedStrongLinks(
     }
   }
   return out
+}
+
+/** Four cells whose only candidates in the unit are those four digits (naked quad), etc. */
+export function strongNakedSets(candidates: CandidateMask[], n: 2 | 3 | 4): StrongLinkGroup[] {
+  return findNakedStrongLinks(candidates, n)
 }
 
 export function strongLinksForN(candidates: CandidateMask[], n: 2 | 3 | 4): StrongLinkGroup[] {

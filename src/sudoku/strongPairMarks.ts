@@ -10,6 +10,7 @@ export type CandStrongMark = {
   digit: Digit
   edges: EdgeMark[]
   unit: UnitKind
+  setSize: number
 }
 
 export function candMarkKey(cell: number, digit: Digit): string {
@@ -47,10 +48,9 @@ function edgesForUnit(unit: UnitKind, cell: number, unitIndex: number): EdgeMark
       return ['top', 'bottom']
     case 'box': {
       const d = distToBoxEdge(cell, unitIndex)
-      const edges: EdgeMark[] = []
-      edges.push(d.left <= d.right ? 'left' : 'right')
-      edges.push(d.top <= d.bottom ? 'top' : 'bottom')
-      return edges
+      const side: EdgeMark = d.left <= d.right ? 'left' : 'right'
+      const vert: EdgeMark = d.top <= d.bottom ? 'top' : 'bottom'
+      return [side, vert]
     }
     default:
       return []
@@ -71,6 +71,7 @@ export function marksForStrongGroup(
         digit,
         edges: edgesForUnit(group.unit, cell, group.unitIndex),
         unit: group.unit,
+        setSize: group.cells.length,
       })
     }
   }

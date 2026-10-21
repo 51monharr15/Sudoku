@@ -47,9 +47,11 @@ function CandEdgeMarks({ mark }: { mark: CandStrongMark }) {
       {mark.edges.map((e: EdgeMark) => (
         <span key={e} className={`cand-edge cand-edge-${e} ${unitClass}`} aria-hidden />
       ))}
-      <span className={`cand-unit-tag ${unitClass}`} aria-hidden>
-        {mark.unit === 'row' ? 'R' : mark.unit === 'col' ? 'C' : 'B'}
-      </span>
+      {mark.setSize >= 4 && (
+        <span className={`cand-unit-tag ${unitClass}`} aria-hidden>
+          {mark.unit === 'row' ? 'R' : mark.unit === 'col' ? 'C' : 'B'}
+        </span>
+      )}
     </>
   )
 }
