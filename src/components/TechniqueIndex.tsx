@@ -1,43 +1,43 @@
-const TECHNIQUES = [
-  'naked_single',
-  'hidden_single',
-  'naked_pair',
-  'hidden_pair',
-  'naked_triple',
-  'pointing',
-  'x_wing',
-  'xy_wing',
-  'skyscraper',
-  'two_string_kite',
-  'strong_link',
-] as const
+import {
+  TECHNIQUE_LABEL,
+  TECHNIQUE_ORDER,
+  type TechniqueKey,
+} from '../sudoku/techniqueStats'
 
 interface TechniqueIndexProps {
-  counts: Record<string, number>
-  enabled: Record<string, boolean>
-  onToggle: (key: string) => void
+  counts: Record<TechniqueKey, number>
+  enabled: Partial<Record<TechniqueKey, boolean>>
+  onToggle: (key: TechniqueKey) => void
 }
 
 export function TechniqueIndex({ counts, enabled, onToggle }: TechniqueIndexProps) {
   return (
     <div className="tech-index">
-      <h2 className="tech-title">Techniques</h2>
-      <p className="tech-hint">Swipe back for grid. Toggle highlights (prototype).</p>
+      <h2 className="tech-title">Consequences</h2>
+      <p className="tech-hint">
+        Swipe ← for grid. Turn a row on to see that pattern on the board (counts are how many exist now).
+      </p>
       <ul className="tech-list">
-        {TECHNIQUES.map((key) => (
-          <li key={key}>
-            <label className="tech-row">
-              <input
-                type="checkbox"
-                checked={enabled[key] ?? false}
-                onChange={() => onToggle(key)}
-                disabled={(counts[key] ?? 0) === 0}
-              />
-              <span className="tech-name">{key.replace(/_/g, ' ')}</span>
-              <span className="tech-count">{counts[key] ?? 0}</span>
-            </label>
-          </li>
-        ))}
+        {TECHNIQUE_ORDER.map((key) => {
+          const count = counts[key] ?? 0
+          return (
+            <li key={key}>
+              <label className={`tech-row ${count === 0 ? 'tech-row-dim' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={enabled[key] ?? false}
+                  onChange={() => onToggle(key)}
+                  disabled={count === 0}
+                />
+                <span className="tech-abbr">{key}</span>
+                <span className="tech-count">{count}</span>
+              </label>
+              {enabled[key] && (
+                <p className="tech-desc">{TECHNIQUE_LABEL[key]}</p>
+              )}
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

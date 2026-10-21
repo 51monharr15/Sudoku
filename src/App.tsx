@@ -9,10 +9,17 @@ import { APP_VERSION } from './appVersion'
 import { computeCandidates } from './sudoku/candidates'
 import {
   buildConsequenceList,
-  countTechniques,
   stepHighlightCells,
   toggleCandidateMask,
 } from './sudoku/consequenceList'
+import { allStrongDoubleMarks } from './sudoku/strongPairMarks'
+import { strongLinksForN } from './sudoku/strongLinks'
+import {
+  hiddenSingleCells,
+  nakedSingleCells,
+  techniqueCounts,
+  type TechniqueKey,
+} from './sudoku/techniqueStats'
 import { cloneGrid, conflictingCells } from './sudoku/grid'
 import { importPuzzle, SAMPLE_PUZZLE } from './sudoku/import'
 import type { CandidateMask, ChainStep, Digit, Grid } from './sudoku/types'
@@ -55,7 +62,7 @@ export default function App() {
   )
   const [clStepIndex, setClStepIndex] = useState<number | null>(null)
   const [pendingElims, setPendingElims] = useState<{ cell: number; digit: Digit }[]>([])
-  const [techEnabled, setTechEnabled] = useState<Record<string, boolean>>({})
+  const [techEnabled, setTechEnabled] = useState<Partial<Record<TechniqueKey, boolean>>>({})
 
   const rebuildCl = useCallback((v: Grid, c: CandidateMask[]) => {
     const steps = buildConsequenceList(v, c)
@@ -177,11 +184,23 @@ export default function App() {
       for (const c of stepHighlightCells(activeStep)) map.set(c, 'cl-finding')
     }
     for (const { cell } of pendingElims) map.set(cell, 'cl-elim')
+    if (techEnabled.Ns) {
+      for (const c of nakedSingleCells(values, candidates)) map.set(c, 'tech-ns')
+    }
+    if (techEnabled.Os) {
+      for (const c of hiddenSingleCells(values, candidates)) map.set(c, 'tech-os')
+    }
     if (selectedCell !== null && !map.has(selectedCell)) map.set(selectedCell, 'selected')
     return map
-  }, [conflictAt, conflictPeers, activeStep, pendingElims, selectedCell])
+  }, [conflictAt, conflictPeers, activeStep, pendingElims, selectedCell, techEnabled, values, candidates])
 
-  const techCounts = useMemo(() => countTechniques(clSteps), [clSteps])
+  const techCounts = useMemo(() => techniqueCounts(values, candidates), [values, candidates])
+
+  const edgeMarks = useMemo(() => {
+    if (!techEnabled.Sd) return new Map()
+    const groups = strongLinksForN(candidates, 2)
+    return allStrongDoubleMarks(groups)
+  }, [techEnabled.Sd, candidates])
 
   const showApply = pendingElims.length > 0
 
@@ -248,6 +267,7 @@ export default function App() {
               selectedCell={selectedCell}
               selectedDigits={selectedDigits}
               highlights={highlights}
+              edgeMarks={edgeMarks}
               onSelectCell={handleCell}
             />
             <ClStepBar
@@ -268,7 +288,9 @@ export default function App() {
             <TechniqueIndex
               counts={techCounts}
               enabled={techEnabled}
-              onToggle={(key) => setTechEnabled((e) => ({ ...e, [key]: !e[key] }))}
+              onToggle={(key: TechniqueKey) =>
+                setTechEnabled((e) => ({ ...e, [key]: !e[key] }))
+              }
             />
           </section>
         </div>

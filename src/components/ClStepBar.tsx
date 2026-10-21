@@ -13,9 +13,9 @@ function stepLabel(step: ChainStep | undefined): string {
   if (!step) return 'No steps'
   switch (step.kind) {
     case 'naked_single':
-      return 'Naked single'
+      return 'Ns — naked single'
     case 'hidden_single':
-      return 'Hidden single'
+      return 'Os — obscured single'
     default:
       return step.kind.replace(/_/g, ' ')
   }

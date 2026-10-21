@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { colOf, rowOf, maskDigits } from '../sudoku/grid'
+import type { CellMarks } from '../sudoku/strongPairMarks'
 import type { CandidateMask, CellValue, Digit, Grid } from '../sudoku/types'
 
 export type CellHighlight =
@@ -8,6 +9,8 @@ export type CellHighlight =
   | 'conflict'
   | 'conflict-peer'
   | 'selected'
+  | 'tech-ns'
+  | 'tech-os'
 
 interface SudokuGridProps {
   values: Grid
@@ -16,6 +19,7 @@ interface SudokuGridProps {
   selectedCell: number | null
   selectedDigits: Digit[]
   highlights: Map<number, CellHighlight>
+  edgeMarks: Map<number, CellMarks>
   onSelectCell: (cell: number) => void
 }
 
@@ -35,6 +39,17 @@ function cellClasses(
   return parts.join(' ')
 }
 
+function EdgeMarks({ marks }: { marks: CellMarks }) {
+  return (
+    <>
+      {marks.top && <span className="edge-mark edge-top" aria-hidden />}
+      {marks.bottom && <span className="edge-mark edge-bottom" aria-hidden />}
+      {marks.left && <span className="edge-mark edge-left" aria-hidden />}
+      {marks.right && <span className="edge-mark edge-right" aria-hidden />}
+    </>
+  )
+}
+
 export function SudokuGrid({
   values,
   givens,
@@ -42,6 +57,7 @@ export function SudokuGrid({
   selectedCell,
   selectedDigits,
   highlights,
+  edgeMarks,
   onSelectCell,
 }: SudokuGridProps) {
   const selectedSet = useMemo(() => new Set(selectedDigits), [selectedDigits])
@@ -52,6 +68,7 @@ export function SudokuGrid({
         const isGiven = givens[cell]
         const displayValue = value as CellValue
         const cands = displayValue === 0 ? maskDigits(candidates[cell]) : []
+        const marks = edgeMarks.get(cell)
         return (
           <button
             key={cell}
@@ -61,6 +78,7 @@ export function SudokuGrid({
             className={cellClasses(cell, selectedCell, highlights)}
             onClick={() => onSelectCell(cell)}
           >
+            {marks && <EdgeMarks marks={marks} />}
             {displayValue !== 0 ? (
               <span
                 className={`digit ${isGiven ? 'given' : 'user'} ${
@@ -78,7 +96,9 @@ export function SudokuGrid({
                   return (
                     <span
                       key={d}
-                      className={`cand ${on ? 'on' : 'off'} ${picked ? `cand-hl cand-hl-${d}` : ''}`}
+                      className={`cand ${on ? 'on' : 'off'} cand-d${d} ${
+                        picked ? `cand-hl cand-hl-${d}` : ''
+                      }`}
                     >
                       {on ? d : ''}
                     </span>

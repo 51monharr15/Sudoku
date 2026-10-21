@@ -60,7 +60,7 @@ describe('analyzeProposedMove', () => {
 
   it('rejects conflicting placement', () => {
     const { values } = importPuzzle(SAMPLE_PUZZLE)
-    const analysis = analyzeProposedMove(values, 0, 5)
+    const analysis = analyzeProposedMove(values, 0, 9)
     expect(analysis.valid).toBe(false)
   })
 })
