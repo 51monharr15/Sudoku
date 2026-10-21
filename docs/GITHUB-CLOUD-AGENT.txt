@@ -1,0 +1,40 @@
+GitHub push from Cursor Cloud Agent (Sudoku)
+============================================
+
+Goal
+----
+Agent commits go to GitHub 51monharr15/Sudoku on main — same as your laptop.
+No manual pull-from-Origin then push-to-GitHub.
+
+What is missing without setup
+-----------------------------
+The agent VM can push to Cursor Origin automatically.
+It cannot push to GitHub until a secret is stored in your Cloud Environment.
+
+What you add (once)
+-------------------
+1. GitHub → Settings → Developer settings → Personal access tokens.
+2. Fine-grained token (recommended):
+   - Repository access: only Sudoku
+   - Permissions: Contents = Read and write
+   OR classic token with scope "repo" for that repository.
+3. Cursor → Cloud Agents → Environments → (your Sudoku environment)
+   → Secrets → add name exactly: GITHUB_TOKEN → paste token → Save.
+4. Start a NEW agent chat after saving (running agents do not pick up new secrets).
+
+Verify (agent or you on laptop)
+-------------------------------
+  git remote -v
+  # github → https://github.com/51monharr15/Sudoku.git
+
+After GITHUB_TOKEN is set in the environment, from repo root:
+  bash scripts/setup-github-push.sh
+
+That configures the github remote for push and runs git push github HEAD:main.
+
+Laptop (unchanged)
+------------------
+  origin → https://github.com/51monharr15/Sudoku.git
+  git pull origin main
+
+Do not commit tokens or put them in environment.json.
